@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   main.cpp
  * Author: severste
  *
@@ -12,16 +12,15 @@
  */
 
 #include <cstdlib>
-#include <ncurses.h>
+//#include <ncurses.h>
 #include "CMenu.h"
 
 using namespace std;
 
 /*
- * 
+ *
  */
 int main(int argc, char** argv) {
-    initscr(); //inicializace ncurses okna
     CMenu menu;
 
     menu.print();
@@ -29,9 +28,5 @@ int main(int argc, char** argv) {
     menu.run();
 
 
-    getch(); //cekani na vstup uzivatele a pote konec
-    endwin(); // zruseni ncurses okna
-
     return 0;
 }
-
