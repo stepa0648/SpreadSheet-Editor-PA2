@@ -21,6 +21,7 @@ public:
 
     CTable();
     void insert(size_t y, size_t x, const CCell & val);
+    CCell & getCell(size_t y, size_t x);
     void print(size_t y, size_t x);
 
 private:
