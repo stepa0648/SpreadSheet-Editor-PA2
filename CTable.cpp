@@ -4,12 +4,15 @@
  *
  * Created on 23. dubna 2017, 16:20
  */
- #include <vector>
- #include <iostream>
- #include <iomanip>
 
  #include "CTable.h"
  #include "CCell.h"
+
+ #include <vector>
+ #include <iostream>
+ #include <iomanip>
+ #include <string>
+
 
 using namespace std;
 
@@ -44,14 +47,6 @@ CTable::CTable() : width(10), height(10) {
     m_table.resize( 11, CRow() );
 }
 
-void CTable::insert(size_t y, size_t x, const CCell & val) {
-    //if table height is lower than y resize the table height;
-    if (m_table.size() <= y) {
-        m_table.resize(2 * y, CRow() );
-    }
-
-    (m_table[y])[x] = val;
-}
 CCell & CTable::getCell(size_t y, size_t x) {
     //if table height is lower than y resize the table height;
     if (m_table.size() <= y) {
@@ -61,9 +56,15 @@ CCell & CTable::getCell(size_t y, size_t x) {
     return (m_table[y])[x];
 }
 
-void CTable::print(size_t y, size_t x) {
+/**
+* inserts string val in Cell in y'th row and in x'th column
+*/
+void CTable::insert(size_t y, size_t x, const string & val) {
+  getCell(y,x) = CCell(val);
+}
 
-  cout << "m_table size:  " << m_table.size() << " y+10= " << y+10 << endl;
+
+void CTable::print(size_t y, size_t x) {
   //if the area that we want to print is bigger than our tabel, we must resize it
   if (m_table.size() <= y+10) {
       m_table.resize(2 * (y+10), CRow() );

@@ -2,6 +2,7 @@
 #define CTABLE_H
 
 #include <vector>
+#include <string>
 
 #include "CCell.h"
 
@@ -20,8 +21,8 @@ class CTable {
 public:
 
     CTable();
-    void insert(size_t y, size_t x, const CCell & val);
     CCell & getCell(size_t y, size_t x);
+    void insert(size_t y, size_t x, const std::string & val);
     void print(size_t y, size_t x);
 
 private:
