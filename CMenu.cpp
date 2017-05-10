@@ -18,7 +18,7 @@ using namespace std;
 CMenu::CMenu() {
 }
 
-void CMenu::print() {
+void CMenu::printHeader() {
     cout << "   _____                          _     _               _     ______    _ _ _                    __   ___  \n";
     cout << "  / ____|                        | |   | |             | |   |  ____|  | (_) |                  /_ | / _ \\ \n";
     cout << " | (___  _ __  _ __ ___  __ _  __| |___| |__   ___  ___| |_  | |__   __| |_| |_ ___  _ __  __   _| || | | |\n";
@@ -28,14 +28,39 @@ void CMenu::print() {
     cout << "        | |                                                                                                          \n";
     cout << "        |_|                                                                                                          \n";
     cout << endl;
-    cout << "Menu: \n";
-    cout << "1. Vytvorit novy spreadsheet\n";
-    cout << "2. Informace\n";
-    cout << "3. Konec\n";
 }
 
-int CMenu::run() {
+void CMenu::printMenu() {
+    cout << "Menu:" << endl;
+    cout << "1. Vytvorit novy spreadsheet" << endl;
+    cout << "2. Informace" << endl;
+    cout << "3. Konec" << endl;
+}
+void CMenu::printInfo() {
+  cout << "==============================================================" << endl;
+  cout << "Informace" << endl;
 
+  cout << "Napoveda" << endl;
+  cout << endl;
+  cout << "1. Zobrazeni tabulky: zobrazuje se tabulka o velikosti 10x10, souradnice jsou leveho horniho rohu" << endl;
+  cout << "2. Vlozeni do tabulky: zadejte souradnice a pote text co chcete vlozit" << endl;
+  cout << "3. Zobrazeni napovedy" << endl;
+  cout << endl;
+  cout << "==============================" << endl;
+}
+
+void CMenu::printHelp() {
+  cout << "==============================================================" << endl;
+  cout << "Napoveda" << endl;
+  cout << endl;
+  cout << "1. Zobrazeni tabulky: zobrazuje se tabulka o velikosti 10x10, souradnice jsou leveho horniho rohu" << endl;
+  cout << "2. Vlozeni do tabulky: zadejte souradnice a pote text co chcete vlozit" << endl;
+  cout << "3. Zobrazeni napovedy" << endl;
+  cout << endl;
+  cout << "==============================" << endl;
+}
+
+int CMenu::getInput() {
     char c;
     while (1) {
         cin >> c;

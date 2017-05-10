@@ -70,23 +70,24 @@ void CTable::print(size_t y, size_t x) {
       m_table.resize(2 * (y+10), CRow() );
   }
 
-    cout << setw(10) << " " << "|"; //prints empty cell in left top corner
+  cout << "===============================================================================" << endl;
+  cout << endl;
+  cout << setw(10) << " " << "|"; //prints empty cell in left top corner
 
-    for (size_t i = x; i <= x+10; i++) { //prints number of columns
-        cout << setw(10) << i << "|";
-    }
-    cout << endl;
+  for (size_t i = x; i <= x+10; i++) { //prints number of columns
+      cout << setw(10) << i << "|";
+  }
+  cout << endl;
 
-    for (size_t i = 0; i <= 11; i++) { //prints separator of number of columns
-        for (int j = 0; j < 10; j++) {
-            cout << "_";
-        }
-        cout << "|";
-    }
-    cout << endl;
+  for (size_t i = 0; i <= 11; i++) { //prints separator of number of columns
+      for (int j = 0; j < 10; j++) {
+          cout << "_";
+      }
+      cout << "|";
+  }
+  cout << endl;
 
-    for (size_t i = y; i <= y+10; i++) { //prints rows
-        m_table[i].print(i, x);
-    }
-    cout << "Width: " << width << " Height: " << height << endl;
+  for (size_t i = y; i <= y+10; i++) { //prints rows
+      m_table[i].print(i, x);
+  }
 }
