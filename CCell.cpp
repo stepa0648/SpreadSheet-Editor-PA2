@@ -1,8 +1,15 @@
+
 #include <iostream>
-#include <cstdlib>
 #include "CCell.h"
 
 using namespace std;
+
+
+void CCell::printContent(){
+  cout << m_textVal << endl;
+}
+
+
 ostream & operator<<(ostream & out, const CCell & a){
   if ( a.isNumber ) {
       out << a.m_result;

@@ -4,28 +4,26 @@
  *
  * Created on 23. dubna 2017, 16:20
  */
-#include "CTable.h"
-#include "CRow.h"
-#include "CCell.h"
+ #include <vector>
+ #include <iostream>
+ #include <iomanip>
 
-#include <cstdlib>
-#include <vector>
-#include <iostream>
-#include <iomanip>
+ #include "CTable.h"
+ #include "CCell.h"
 
 using namespace std;
 
-//CRow=================================================================
+//CRow==========================================================================
 
 CRow::CRow() : width(0) {
-    m_row.resize(2);
+    m_row.resize(10);
 }
 
 CCell & CRow::operator[](size_t pos){
     if (pos > width) {
         width = pos;
     }
-    if (m_row.size() <= pos) {
+    if ( m_row.size() <= pos ) {
         m_row.resize(2 * pos);
     }
     return m_row[pos];
@@ -39,10 +37,10 @@ void CRow::print(size_t cnt) {
     std::cout << std::endl;
 }
 
-//CTable===============================================================
+//CTable========================================================================
 
 CTable::CTable() : width(0), height(0) {
-    m_table.resize(2);
+    m_table.resize(10);
 }
 
 void CTable::insert(size_t y, size_t x, CCell val) {
