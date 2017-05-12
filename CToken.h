@@ -1,6 +1,8 @@
 #ifndef CTOKEN_H
 #define CTOKEN_H
 
+#include <string>
+
 class CToken{
 public:
   CToken();
@@ -23,7 +25,31 @@ public:
 private:
   double m_Val;
 };
+//==============================================================================
+class CFunction: CToken{
+public:
+  CFunction( std::string function );
+  virtual bool isFunction() const;
+  virtual bool isOperator() const;
+  virtual bool isNumber() const;
+  virtual double performOperation(double val, double dummy) const;
 
+  virtual double getVal() const;
+protected:
+  std::string m_func;
+};
+//==============================================================================
+class COperator: CToken{
+public:
+  COperator( std::string o);
 
+  virtual bool isFunction() const;
+  virtual bool isOperator() const;
+  virtual bool isNumber() const;
+  virtual double performOperation(double left, double right) const;
+  virtual double getVal() const;
+protected:
+  std::string m_op;
+};
 
 #endif

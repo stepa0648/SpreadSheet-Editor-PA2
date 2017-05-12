@@ -26,20 +26,19 @@ double CNumber::getVal() const {
     return m_Val;
   }
 //==============================================================================
-class CFunction: CToken{
-public:
-  CFunction( std::string function): m_func(function){}
 
-  virtual bool isFunction() const{
+  CFunction::CFunction( std::string function): m_func(function){}
+
+   bool CFunction::isFunction() const{
     return true;
   }
-  virtual bool isOperator() const {
+   bool CFunction::isOperator() const {
     return false;
   }
-  virtual bool isNumber() const {
+   bool CFunction::isNumber() const {
     return false;
   }
-  virtual double performOperation(double val, double dummy){
+   double CFunction::performOperation(double val, double dummy) const{
       double res;
 
       if(m_func == "sin"){
@@ -65,27 +64,23 @@ public:
       return res;
   }
 
-  virtual double getVal() const {
+   double CFunction::getVal() const {
     return 0;
   }
-protected:
-  std::string m_func;
-};
-//==============================================================================
-class COperator: CToken{
-public:
-  COperator( std::string o): m_op(o) {}
 
-  virtual bool isFunction() const{
+//==============================================================================
+  COperator::COperator( std::string o): m_op(o) {}
+
+   bool COperator::isFunction() const{
     return false;
   }
-  virtual bool isOperator() const {
+   bool COperator::isOperator() const {
     return true;
   }
-  virtual bool isNumber() const {
+   bool COperator::isNumber() const {
     return false;
   }
-  virtual double performOperation(double left, double right){
+   double COperator::performOperation(double left, double right) const {
     double res;
     if( m_op == "+"){
       res = left + right;
@@ -104,10 +99,7 @@ public:
 
     return res;
   }
-  virtual double getVal() const {
+   double COperator::getVal() const {
     return 0;
   }
-protected:
-  std::string m_op;
-};
 //==============================================================================
