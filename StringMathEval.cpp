@@ -17,35 +17,11 @@
 #include <iostream>
 #include <stack>
 #include <exception>
+#include <memory>
+
+#include "CToken.h"
 
 using namespace std;
-/*
-
-void vectorToPostfixNot( vector<string> & vec ){
-    pair<string, int> operatorPrecedence;
-    vector<string> tmp;
-    stack<string> stack;
-    for(auto it = vec.begin(); it <= vec.end(); it++){
-        if( (*it != "+") && (*it != "-") && (*it != "*") && (*it != "/") && (*it != "(") && (*it != ")") && (*it != "^") ){
-            tmp.push_back(*it);
-        }else{
-            if(stack.empty() || *it == "("){
-                stack.push(*it);
-            }else if(*it == ")"){
-                while( stack.top() != "(" ){
-                    vec.push_back(stack.top());
-                    stack.pop();
-                }
-            }else{
-                if(*it < stack.top()){
-                    stack.push(*it);
-                }
-            }
-        }
-    }
-    vec.erase(vec.begin(), vec.end());
-    vec = tmp;
-}*/
 
 /*
 vector<string> stringToVec( const string & str ){
@@ -108,7 +84,8 @@ bool isOperator(const string & c){
 }
 bool isFunction(const string & c){
   return c == "sin" || c == "cos" || c == "tan" || c == "cotg"
-        || c == "abs" || c == "sqrt";
+        || c == "abs" || c == "sqrt" || c == "exp" || c == "log"
+        || c == "ln";
 }
 
 double stringToDouble( const string & str){
@@ -137,30 +114,29 @@ int operatorPrecedence(const string & c){
   return 0;
 }
 
-vector<string> infixToRPN(const vector<string> & vec){
-  //double res=0;
+vector<shared_ptr<CToken>> infixToRPN(const vector<string> & vec){
+  double res=0;
   bool isNumber;
-  vector<string> out;
+  vector<shared_ptr<CToken>> out;
   stack<string> stack;
 
   for(size_t i = 0; i < vec.size(); i++){
     isNumber = true;
+    /** tries to parse string to double to know if it is number or not */
     try{
-      //res = stringToDouble (vec[i]);
-      stringToDouble (vec[i]);
+      res = stringToDouble ( vec[i] );
     }catch( invalid_argument a){
-      //cout << vec[i] << " neni cislo" << endl;
       isNumber = false;
     }
 
     if( isNumber ){
-
-      // push on out
-      out.push_back(vec[i]);
+      /** if token is a number, just push it on the output*/
+      out.push_back(shared_ptr<CToken> (new CNumber(res)) );
 
     }else if( isFunction( vec[i] ) ){
 
-      stack.push(vec[i]);
+      //stack.push(vec[i]);
+      stack.push( vec[i] );
 
     }else if( isOperator( vec[i]) ){
       if( !stack.empty() ){
@@ -168,7 +144,7 @@ vector<string> infixToRPN(const vector<string> & vec){
           if( stack.top() == "(" ){
             break;
           }
-          out.push_back( stack.top() );
+          out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
           stack.pop();
           if( stack.empty() ){
             break;
@@ -183,13 +159,18 @@ vector<string> infixToRPN(const vector<string> & vec){
         if( stack.empty() ){
           break;
         }
-        out.push_back( stack.top() );
-        stack.pop();
+        if( isFunction( stack.top() ) ){
+          out.push_back( shared_ptr<CToken> (new CFunction( stack.top() ) ) );
+          stack.pop();
+        }else{
+          out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
+          stack.pop();
+        }
       }
       if(! stack.empty() ){
         stack.pop();
         if( isFunction( stack.top() ) ){
-          out.push_back( stack.top() );
+          out.push_back( shared_ptr<CToken> (new CFunction( stack.top() ) ) );
           stack.pop();
         }
       }else{
@@ -204,90 +185,72 @@ vector<string> infixToRPN(const vector<string> & vec){
       throw BracketsMissMatch();
       break;
     }
-
-    out.push_back( stack.top() );
-    stack.pop();
+    if( isFunction( stack.top() ) ){
+      out.push_back(shared_ptr<CToken> (new CFunction( stack.top() ) ) );
+      stack.pop();
+    }else{
+      out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
+      stack.pop();
+    }
   }
   return out;
 }
 
 
+/**
+  evalutes vector where is RPN and returns double value
+*/
+double evaluateRPN(const vector<shared_ptr<CToken>> & vec){
+  stack<double> stack;
 
+  for( auto it : vec){
+    if( it->isNumber() ){
+      stack.push( it->getVal() );
+    }else{
+      it->performOperation(stack);
+    }
+  }
 
+  return stack.top();
+}
 
 
 int main(int argc, char** argv) {
 
-    string str1 = "a+b*(c-d)";
-    string str = "-10+2*sin(-4-1)";
-    string str2 = "(42-1)";
-    vector<string> vec;
-    vector<string> infix;
-    vector<string> rpn;
+  double res;
 
-  /*  infix.push_back("-10");
-    infix.push_back("+");
-    infix.push_back("2");
-    infix.push_back("*");
-    infix.push_back("sin");
-    infix.push_back("(");
-    infix.push_back("-4");
-    infix.push_back("-");
-    infix.push_back("1");
-    infix.push_back(")");*/
+  vector<string> infix;
+  vector< shared_ptr<CToken> > rpn;
+
+
 
   infix.push_back("10");
-    infix.push_back("+");
-    infix.push_back("sin");
-    infix.push_back("(");
-    infix.push_back("30");
-    infix.push_back("+");
-    infix.push_back("5");
-    infix.push_back(")");
-    infix.push_back("*");
-    infix.push_back("25");
-    infix.push_back("+");
-    infix.push_back("10");
+  infix.push_back("+");
+  infix.push_back("sin");
+  infix.push_back("(");
+  infix.push_back("30");
+  infix.push_back("+");
+  infix.push_back("5");
+  infix.push_back(")");
+  infix.push_back("*");
+  infix.push_back("25");
+  infix.push_back("+");
+  infix.push_back("10");
+
+  try{
+    rpn = infixToRPN(infix);
+  }catch(const exception & excp){
+    cerr << excp.what() << endl;
+    return 1;
+  }catch(...){
+    cerr << "Neocekavana chyba" << endl;
+    return 2;
+  }
+
+  res = evaluateRPN( rpn );
+
+  cout << res << endl;
 
 
-
-
-try{
-  rpn = infixToRPN(infix);
-}catch(const exception & excp){
-  cerr << excp.what() << endl;
-  return 1;
-}catch(...){
-  cerr << "Neocekavana chyba" << endl;
-  return 2;
-}
-
-
-
-
-    cout << "INFIX:" << endl;
-    for(auto it : infix){
-      cout << it << endl;
-    }
-    cout << "RPN:" << endl;
-    for(auto it : rpn){
-      cout << it << endl;
-    }
-
-
-
-
-    /*vec = stringToVector(str2);
-
-    for(auto it = vec.begin(); it <= vec.end(); it++){
-       cout << *it << "|";
-    }
-    cout << "\n===================" << endl;
-    //vectorToPostfixNot(vec);
-   // for(auto it = vec.begin(); it <= vec.end(); it++){
-      //  cout << *it << ";";
-    //}
-    cout << endl;*/
-
-    return 0;
+  return 0;
 }
