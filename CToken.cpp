@@ -6,6 +6,11 @@
 #include <cmath>
 
 
+#include <iostream>
+
+
+using namespace std;
+
 
 //==============================================================================
 CNumber::CNumber( double val = 0 ):m_Val(val){}
@@ -20,15 +25,17 @@ bool CNumber::isNumber() const {
     return true;
   }
 
-double CNumber::performOperation(double left, double right)const{
-    return 0;
+void CNumber::performOperation(stack<double> & stack){
   }
 double CNumber::getVal() const {
     return m_Val;
   }
+void CNumber::print() const{
+  cout << m_Val;
+}
 //==============================================================================
 
-  CFunction::CFunction( std::string function): m_func(function){}
+  CFunction::CFunction( string function): m_func(function){}
 
    bool CFunction::isFunction() const{
     return true;
@@ -39,8 +46,10 @@ double CNumber::getVal() const {
    bool CFunction::isNumber() const {
     return false;
   }
-   double CFunction::performOperation(double val, double dummy) const{
+   void CFunction::performOperation(stack<double> & stack){
       double res;
+      double val = stack.top();
+      stack.pop();
 
       if(m_func == "sin"){
         res = sin(val);
@@ -63,16 +72,19 @@ double CNumber::getVal() const {
       }else{
         // neni funkce
       }
-
-      return res;
+      stack.push(res);
   }
 
    double CFunction::getVal() const {
     return 0;
   }
 
+  void CFunction::print() const{
+    cout << m_func;
+  }
+
 //==============================================================================
-  COperator::COperator( std::string o): m_op(o) {}
+  COperator::COperator( string o): m_op(o) {}
 
    bool COperator::isFunction() const{
     return false;
@@ -83,8 +95,13 @@ double CNumber::getVal() const {
    bool COperator::isNumber() const {
     return false;
   }
-   double COperator::performOperation(double left, double right) const {
+   void COperator::performOperation(stack<double> & stack){
     double res;
+    double right = stack.top();
+    stack.pop();
+    double left = stack.top();
+    stack.pop();
+
     if( m_op == "+"){
       res = left + right;
     }else if( m_op == "-"){
@@ -99,10 +116,12 @@ double CNumber::getVal() const {
     }else if( m_op == "^"){
       res = pow(left, right);
     }
-
-    return res;
+    stack.push(res);
   }
    double COperator::getVal() const {
     return 0;
+  }
+  void COperator::print() const{
+    cout << m_op;
   }
 //==============================================================================

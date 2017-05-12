@@ -3,6 +3,9 @@
 
 #include <string>
 #include <memory>
+#include <stack>
+
+
 
 class CToken{
 public:
@@ -11,8 +14,9 @@ public:
   virtual bool isFunction() const = 0;
   virtual bool isOperator() const = 0;
   virtual bool isNumber() const = 0;
-  virtual double performOperation(double left, double right) const  = 0;
+  virtual void performOperation( std::stack<double> & stack ) = 0;
   virtual double getVal() const = 0;
+  virtual void print() const = 0;
 };
 //==============================================================================
 class CNumber: public CToken{
@@ -21,8 +25,9 @@ public:
   virtual bool isFunction() const;
   virtual bool isOperator() const;
   virtual bool isNumber() const;
-  virtual double performOperation(double left, double right) const;
+  virtual void performOperation(std::stack<double> & stack);
   virtual double getVal() const;
+  virtual void print() const;
 
 private:
   double m_Val;
@@ -34,8 +39,9 @@ public:
   virtual bool isFunction() const;
   virtual bool isOperator() const;
   virtual bool isNumber() const;
-  virtual double performOperation(double val, double dummy) const;
+  virtual void performOperation(std::stack<double> & stack);
   virtual double getVal() const;
+  virtual void print() const;
 private:
   std::string m_func;
 };
@@ -47,8 +53,9 @@ public:
   virtual bool isFunction() const;
   virtual bool isOperator() const;
   virtual bool isNumber() const;
-  virtual double performOperation(double left, double right) const;
+  virtual void performOperation(std::stack<double> & stack);
   virtual double getVal() const;
+  virtual void print() const;
 private:
   std::string m_op;
 };
