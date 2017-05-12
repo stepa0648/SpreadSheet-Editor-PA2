@@ -106,6 +106,10 @@ class BracketsMissMatch : public exception{
 bool isOperator(const string & c){
   return c == "+" || c == "-" || c == "*" || c == "/";
 }
+bool isFunction(const string & c){
+  return c == "sin" || c == "cos" || c == "tan" || c == "cotg"
+        || c == "abs" || c == "sqrt";
+}
 
 double stringToDouble( const string & str){
   double res = 0;
@@ -150,8 +154,14 @@ vector<string> infixToRPN(const vector<string> & vec){
     }
 
     if( isNumber ){
+
       // push on out
       out.push_back(vec[i]);
+
+    }else if( isFunction( vec[i] ) ){
+
+      stack.push(vec[i]);
+
     }else if( isOperator( vec[i]) ){
       if( !stack.empty() ){
         while( operatorPrecedence(stack.top()) >= operatorPrecedence( vec[i] )){
@@ -160,11 +170,12 @@ vector<string> infixToRPN(const vector<string> & vec){
           }
           out.push_back( stack.top() );
           stack.pop();
+          if( stack.empty() ){
+            break;
+          }
         }
       }
-
       stack.push(vec[i]);
-
     }else if( vec[i] == "("){
       stack.push(vec[i]);
     }else if( vec[i] == ")"){
@@ -177,6 +188,10 @@ vector<string> infixToRPN(const vector<string> & vec){
       }
       if(! stack.empty() ){
         stack.pop();
+        if( isFunction( stack.top() ) ){
+          out.push_back( stack.top() );
+          stack.pop();
+        }
       }else{
         throw BracketsMissMatch();
       }
@@ -210,7 +225,7 @@ int main(int argc, char** argv) {
     vector<string> infix;
     vector<string> rpn;
 
-    infix.push_back("-10");
+  /*  infix.push_back("-10");
     infix.push_back("+");
     infix.push_back("2");
     infix.push_back("*");
@@ -219,7 +234,22 @@ int main(int argc, char** argv) {
     infix.push_back("-4");
     infix.push_back("-");
     infix.push_back("1");
+    infix.push_back(")");*/
+
+  infix.push_back("10");
+    infix.push_back("+");
+    infix.push_back("sin");
+    infix.push_back("(");
+    infix.push_back("30");
+    infix.push_back("+");
+    infix.push_back("5");
     infix.push_back(")");
+    infix.push_back("*");
+    infix.push_back("25");
+    infix.push_back("+");
+    infix.push_back("10");
+
+
 
 
 try{
