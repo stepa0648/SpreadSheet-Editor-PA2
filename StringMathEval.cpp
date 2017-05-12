@@ -79,15 +79,18 @@ class BracketsMissMatch : public exception{
 	}
 };
 
+/** checks if string is an operator, returns bool*/
 bool isOperator(const string & c){
-  return c == "+" || c == "-" || c == "*" || c == "/";
+  return c == "+" || c == "-" || c == "*" || c == "/" || c=="^";
 }
+/** checks if string is a funtion, returns bool*/
 bool isFunction(const string & c){
   return c == "sin" || c == "cos" || c == "tan" || c == "cotg"
         || c == "abs" || c == "sqrt" || c == "exp" || c == "log"
         || c == "ln";
 }
 
+/** converts string to double, if string is NaN throw an exception invalid_argument*/
 double stringToDouble( const string & str){
   double res = 0;
   size_t resLen = 0;
@@ -101,6 +104,7 @@ double stringToDouble( const string & str){
   return res;
 }
 
+/** return the operator precedence, the higer value has higer precedence*/
 int operatorPrecedence(const string & c){
   if( c == "+" || c == "-"){
     return 1;
@@ -134,16 +138,18 @@ vector<shared_ptr<CToken>> infixToRPN(const vector<string> & vec){
       out.push_back(shared_ptr<CToken> (new CNumber(res)) );
 
     }else if( isFunction( vec[i] ) ){
-
-      //stack.push(vec[i]);
+      /** if token is function push it on the stack*/
       stack.push( vec[i] );
 
     }else if( isOperator( vec[i]) ){
       if( !stack.empty() ){
+        /** while a operator with higer or equal precedence is on the stack, pop it to the output and then push operator on a stack */
         while( operatorPrecedence(stack.top()) >= operatorPrecedence( vec[i] )){
+          /** if a left bracket is on the top of the stack dont pop operators, just push this one on the stack*/
           if( stack.top() == "(" ){
             break;
           }
+          /** push operator in the output */
           out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
           stack.pop();
           if( stack.empty() ){
@@ -151,10 +157,15 @@ vector<shared_ptr<CToken>> infixToRPN(const vector<string> & vec){
           }
         }
       }
+      /** push operator on a stack */
       stack.push(vec[i]);
     }else if( vec[i] == "("){
+      /** if token is left bracket push it on the stack no matter what*/
       stack.push(vec[i]);
     }else if( vec[i] == ")"){
+      /** if token is right bracket empty stack until left bracket is found
+          if you empty whole stack brackets were wrong
+      */
       while( stack.top() != "(" ){
         if( stack.empty() ){
           break;
@@ -167,6 +178,7 @@ vector<shared_ptr<CToken>> infixToRPN(const vector<string> & vec){
           stack.pop();
         }
       }
+      /** pop the operators between brackets*/
       if(! stack.empty() ){
         stack.pop();
         if( isFunction( stack.top() ) ){
@@ -174,13 +186,15 @@ vector<shared_ptr<CToken>> infixToRPN(const vector<string> & vec){
           stack.pop();
         }
       }else{
+        /** if a left bracket wasnt in the stack the brackets were wrong*/
         throw BracketsMissMatch();
       }
     }
   }
 
+  /** if you have run out of the tokens you need to empty the stack*/
   while (! stack.empty() ){
-
+    /** if there is a left bracket in stack, brackets were wrong*/
     if( stack.top() == "("){
       throw BracketsMissMatch();
       break;
@@ -188,7 +202,7 @@ vector<shared_ptr<CToken>> infixToRPN(const vector<string> & vec){
     if( isFunction( stack.top() ) ){
       out.push_back(shared_ptr<CToken> (new CFunction( stack.top() ) ) );
       stack.pop();
-    }else{
+    }else{ /** if is an operator*/
       out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
       stack.pop();
     }
@@ -222,20 +236,27 @@ int main(int argc, char** argv) {
   vector<string> infix;
   vector< shared_ptr<CToken> > rpn;
 
+//789×38−(2^4)÷sin(38)+cos(29)
 
-
-  infix.push_back("10");
-  infix.push_back("+");
   infix.push_back("sin");
   infix.push_back("(");
-  infix.push_back("30");
-  infix.push_back("+");
-  infix.push_back("5");
+  infix.push_back("62.4");
   infix.push_back(")");
   infix.push_back("*");
-  infix.push_back("25");
+  infix.push_back("0.345");
+  infix.push_back("-");
+  infix.push_back("(");
+  infix.push_back("(");
+  infix.push_back("6");
   infix.push_back("+");
-  infix.push_back("10");
+  infix.push_back("0.7");
+  infix.push_back(")");
+  infix.push_back("/");
+  infix.push_back("9");
+  infix.push_back(")");
+  infix.push_back("*");
+  infix.push_back("102");
+
 
   try{
     rpn = infixToRPN(infix);

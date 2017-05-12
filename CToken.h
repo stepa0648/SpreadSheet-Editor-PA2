@@ -11,8 +11,6 @@ class CToken{
 public:
   CToken(){}
   virtual ~CToken() {};
-  virtual bool isFunction() const = 0;
-  virtual bool isOperator() const = 0;
   virtual bool isNumber() const = 0;
   virtual void performOperation( std::stack<double> & stack ) = 0;
   virtual double getVal() const = 0;
@@ -22,8 +20,6 @@ public:
 class CNumber: public CToken{
 public:
   CNumber( double val );
-  virtual bool isFunction() const;
-  virtual bool isOperator() const;
   virtual bool isNumber() const;
   virtual void performOperation(std::stack<double> & stack);
   virtual double getVal() const;
@@ -36,8 +32,6 @@ private:
 class CFunction: public CToken{
 public:
   CFunction( std::string function );
-  virtual bool isFunction() const;
-  virtual bool isOperator() const;
   virtual bool isNumber() const;
   virtual void performOperation(std::stack<double> & stack);
   virtual double getVal() const;
@@ -49,9 +43,6 @@ private:
 class COperator: public CToken{
 public:
   COperator( std::string o);
-
-  virtual bool isFunction() const;
-  virtual bool isOperator() const;
   virtual bool isNumber() const;
   virtual void performOperation(std::stack<double> & stack);
   virtual double getVal() const;

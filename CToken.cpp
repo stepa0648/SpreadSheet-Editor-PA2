@@ -15,12 +15,6 @@ using namespace std;
 //==============================================================================
 CNumber::CNumber( double val = 0 ):m_Val(val){}
 
-bool CNumber::isFunction() const{
-    return false;
-  }
-bool CNumber::isOperator() const {
-    return false;
-  }
 bool CNumber::isNumber() const {
     return true;
   }
@@ -37,12 +31,6 @@ void CNumber::print() const{
 
   CFunction::CFunction( string function): m_func(function){}
 
-   bool CFunction::isFunction() const{
-    return true;
-  }
-   bool CFunction::isOperator() const {
-    return false;
-  }
    bool CFunction::isNumber() const {
     return false;
   }
@@ -86,12 +74,6 @@ void CNumber::print() const{
 //==============================================================================
   COperator::COperator( string o): m_op(o) {}
 
-   bool COperator::isFunction() const{
-    return false;
-  }
-   bool COperator::isOperator() const {
-    return true;
-  }
    bool COperator::isNumber() const {
     return false;
   }
