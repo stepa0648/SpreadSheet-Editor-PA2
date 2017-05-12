@@ -10,6 +10,12 @@
 #include "CCell.h"
 #include <climits>
 
+#define END 0
+#define PRINT 1
+#define INSERT 2
+#define PRINTCELL 3
+#define HELP 4
+
 using namespace std;
 
 void getCoords(int & y, int & x){
@@ -26,11 +32,11 @@ int inputHandler(){
   cin.ignore(INT_MAX, '\n');
 
   switch (x) {
-    case '1': return 1; break;
-    case '2': return 2; break;
-    case '3': return 3; break;
-    case '4': return 4; break;
-    case 'x': return 0; break;
+    case 'p': return PRINT; break;
+    case 'i': return INSERT; break;
+    case 'c': return PRINTCELL; break;
+    case 'h': return HELP; break;
+    case 'q': return END; break;
     default: cout << "Zadejte platne hodnoty" << endl;
   }
   return -1;
@@ -63,29 +69,30 @@ int main(int argc, char** argv) {
     int x, y;
     string str;
 
-    table.print(0,0);
+    menu.printHelp();
     while(1){
       choice = inputHandler();
 
 
-      if( choice == 1 ){
+      if( choice == PRINT ){
         cout << "Vypis tabulky:" << endl;
         getCoords(y,x);
         table.print(y,x);
-      }else if( choice == 2){
+      }else if( choice == INSERT){
         cout << "Vlozeni hodnoty do bunky:" << endl;
         getCoords(y,x);
         cout << "Zadejte text: ";
-        cin >> str; // odladit aby se neprerusil mezerou
+        getline(cin, str); /** get text from user*/
         table.insert(y,x,str);
         cout << "Uspesne vlozeno" << endl;
-      }else if(choice == 3){
+      }else if(choice == PRINTCELL){
         cout << "Vypis hodnoty bunky:" << endl;
         getCoords(y,x);
+        cout << "Bunka(" << y << "," << x <<") = ";
         table.getCell(y,x).printContent();
-      }else if(choice == 4){
+      }else if(choice == HELP){
         menu.printHelp();
-      }else if( choice == 0){
+      }else if( choice == END){
         break;
       }
     }
