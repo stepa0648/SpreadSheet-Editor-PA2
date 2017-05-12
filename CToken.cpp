@@ -1,10 +1,11 @@
 
+#include "CToken.h"
 
 #include <string>
 #include <stack>
 #include <cmath>
 
-#include "CToken.h"
+
 
 //==============================================================================
 CNumber::CNumber( double val = 0 ):m_Val(val){}
@@ -19,7 +20,7 @@ bool CNumber::isNumber() const {
     return true;
   }
 
-double CNumber::performOperation(double left, double right){
+double CNumber::performOperation(double left, double right)const{
     return 0;
   }
 double CNumber::getVal() const {
@@ -59,6 +60,8 @@ double CNumber::getVal() const {
         res = log10(val);
       }else if(m_func == "ln"){
         res = log(val);
+      }else{
+        // neni funkce
       }
 
       return res;
@@ -90,7 +93,7 @@ double CNumber::getVal() const {
       res = left * right;
     }else if( m_op == "/"){
       if( right != 0){
-        res = left - right;
+        res = left / right;
       }
       // dodelat vyjimku
     }else if( m_op == "^"){
