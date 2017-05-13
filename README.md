@@ -13,24 +13,27 @@ V Menu:
     'q' Konec programu
     
 Po vytvořeni nového spreadsheetu:
-    'p' (print) Zobrazeni tabulky: zobrazuje se tabulka o velikosti 10x10, souradnice jsou leveho horniho rohu teto tabulky
-    'i' (insert) Vlozeni do tabulky: zadejte souradnice a pote text co chcete vlozit
-               Pro vlozeni matematickeho vyrazu uvedte jako prvni znak "="
-               Pro vlozeni hodnoty bunky pouzijte [y;x] kde y je cislo radku a x cislo sloupce
-  'c' (print Cell) Zobrazeni obsahu bunky
-  'h' (help) Zobrazeni napovedy k ovladani
-  'q' (quit) Konec programu
+
+            'p' (print) Zobrazeni tabulky: zobrazuje se tabulka o velikosti 10x10, souradnice jsou leveho horniho rohu teto             tabulky
+            'i' (insert) Vlozeni do tabulky: zadejte souradnice a pote text co chcete vlozit
+                           Pro vlozeni matematickeho vyrazu uvedte jako prvni znak "="
+                           Pro vlozeni hodnoty bunky pouzijte [y;x] kde y je cislo radku a x cislo sloupce
+            'c' (print Cell) Zobrazeni obsahu bunky
+            'h' (help) Zobrazeni napovedy k ovladani
+            'q' (quit) Konec programu
 
 Operátory:
-+, -, *, /, ^(mocnina);
+
+    +, -, *, /, ^(mocnina);
 
 Funkce:
-sin(x): sinus
-cos(x): cosinus
-tan(x): tangens
-cotg(x): cotangens
-abs(x): absolutní hodnota
-exp(x): exponenciální funkce
-log(x): desítkový logaritmus
-ln(x): přirozený logaritmus
-sqrt(x): druhá odmocnina
+
+    sin(x): sinus
+    cos(x): cosinus
+    tan(x): tangens
+    cotg(x): cotangens
+    abs(x): absolutní hodnota
+    exp(x): exponenciální funkce
+    log(x): desítkový logaritmus
+    ln(x): přirozený logaritmus
+    sqrt(x): druhá odmocnina
