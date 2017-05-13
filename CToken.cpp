@@ -5,11 +5,27 @@
 #include <stack>
 #include <cmath>
 
+#include <exception>
 
 #include <iostream>
 
 
 using namespace std;
+
+
+class DivisionByZero: public exception{
+	public:
+	virtual const char * what() const noexcept{
+		return "DivisionByZero";
+	}
+};
+
+class NotAFunction : public exception{
+	public:
+	virtual const char * what() const noexcept{
+		return "Not A Function";
+	}
+};
 
 
 //==============================================================================
@@ -58,7 +74,8 @@ void CNumber::print() const{
       }else if(m_func == "ln"){
         res = log(val);
       }else{
-        // neni funkce
+        /** throws an exception NotAFunction, if its not known function*/
+        throw NotAFunction();
       }
       stack.push(res);
   }
@@ -93,8 +110,10 @@ void CNumber::print() const{
     }else if( m_op == "/"){
       if( right != 0){
         res = left / right;
+      }else{
+        /** throws an exception DivisionByZero, if you divide by 0*/
+        throw DivisionByZero();
       }
-      // dodelat vyjimku
     }else if( m_op == "^"){
       res = pow(left, right);
     }

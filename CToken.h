@@ -2,10 +2,7 @@
 #define CTOKEN_H
 
 #include <string>
-#include <memory>
 #include <stack>
-
-
 
 class CToken{
 public:
