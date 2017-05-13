@@ -11,13 +11,14 @@ public:
     CCell( std::string text);
 
     void printContent();
-    bool testBrackets() const;
+    void setRes(double res);
+    double getRes() const;
+    void Number();
 
     friend std::ostream & operator << (std::ostream & out, const CCell & a);
 
 private:
     std::string m_textVal;
-    size_t m_textLen;
     double m_result;
     bool isNumber;
 };
