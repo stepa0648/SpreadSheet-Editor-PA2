@@ -18,7 +18,7 @@ using namespace std;
 CMenu::CMenu() {
 }
 
-void CMenu::print() {
+void CMenu::printHeader() {
     cout << "   _____                          _     _               _     ______    _ _ _                    __   ___  \n";
     cout << "  / ____|                        | |   | |             | |   |  ____|  | (_) |                  /_ | / _ \\ \n";
     cout << " | (___  _ __  _ __ ___  __ _  __| |___| |__   ___  ___| |_  | |__   __| |_| |_ ___  _ __  __   _| || | | |\n";
@@ -28,30 +28,54 @@ void CMenu::print() {
     cout << "        | |                                                                                                          \n";
     cout << "        |_|                                                                                                          \n";
     cout << endl;
-    cout << "Menu: \n";
-    cout << "1. Vytvorit novy spreadsheet\n";
-    cout << "2. Informace\n";
-    cout << "3. Konec\n";
 }
 
-int CMenu::run() {
+void CMenu::printMenu() {
+    cout << "Menu:" << endl;
+    cout << "'n' Vytvorit novy spreadsheet" << endl;
+    cout << "'i' Informace a napoveda" << endl;
+    cout << "'q' Konec" << endl;
+}
+void CMenu::printInfo() {
+  //cout << "==============================================================" << endl;
+  cout << endl;
+  cout << "Informace" << endl;
 
+  this->printHelp();
+}
+
+void CMenu::printHelp() {
+  //cout << "==============================================================" << endl;
+  cout << endl;
+  cout << "Ovladani" << endl;
+  cout << endl;
+  cout << "'p' (print) Zobrazeni tabulky: zobrazuje se tabulka o velikosti 10x10, souradnice jsou leveho horniho rohu teto tabulky" << endl;
+  cout << "'i' (insert) Vlozeni do tabulky: zadejte souradnice a pote text co chcete vlozit" << endl;
+  cout << "             Pro vlozeni matematickeho vyrazu uvedte jako prvni znak \"=\"" << endl;
+  cout << "'c' (print Cell) Zobrazeni obsahu bunky" << endl;
+  cout << "'h' (help) Zobrazeni napovedy k ovladani" << endl;
+  cout << "'q' (quit) Konec" << endl;
+  cout << endl;
+  //cout << "==============================" << endl;
+}
+
+int CMenu::getInput() {
     char c;
     while (1) {
         cin >> c;
         cin.ignore(INT_MAX, '\n');
 
-        if (c != '1' && c != '2' && c != '3') {
-            cout << "Stisknete klavesu 1, 2 nebo 3" << endl;
+        if (c != 'n' && c != 'i' && c != 'q') {
+            cout << "Stisknete klavesu n, i nebo q" << endl;
         }
 
-        if (c == '1') {
+        if (c == 'n') {
             return 1;
         }
-        if (c == '2') {
+        if (c == 'i') {
             return 2;
         }
-        if (c == '3') {
+        if (c == 'q') {
             return 3;
         }
     }
