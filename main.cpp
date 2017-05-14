@@ -86,11 +86,11 @@ int main(int argc, char** argv) {
 
         table.insert(y,x,str);
 
-        cout << "Uspesne vlozeno" << endl;
+
       }else if(choice == PRINTCELL){
         cout << "Vypis hodnoty bunky:" << endl;
         getCoords(y,x);
-        cout << "Bunka(" << y << "," << x <<") = ";
+        cout << "Bunka(" << y << "," << x <<"): ";
         table.getCell(y,x).printContent();
       }else if(choice == HELP){
         menu.printHelp();
