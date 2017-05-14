@@ -45,10 +45,13 @@ void CRow::print(size_t cnt, size_t x, const CTable & table) {
     cout << setw(10) << cnt << "|"; //print number of the row in front of the row
     double res = 0;
     for (size_t i = x; i <= x+10; i++) {//prints one row of cells
+
         res = m_row[i].getRes(table);
         if(  res == 0 ){
             if( m_row[i].getText().size() == 0 ){
               cout << setw(10) << "" << "|";
+            }else{
+              cout << setw(10) << m_row[i] << "|";
             }
         }else{
           string str = to_string(res);
