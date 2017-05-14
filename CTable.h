@@ -6,12 +6,14 @@
 
 #include "CCell.h"
 
+class CTable;
+
 class CRow {
 public:
     CRow();
     CCell & operator[](size_t pos);
     CCell getCell(size_t pos) const;
-    void print(size_t cnt, size_t x);
+    void print(size_t cnt, size_t x, const CTable & table);
   private:
       std::vector<CCell> m_row;
       size_t width;

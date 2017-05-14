@@ -1,3 +1,6 @@
+#ifndef MATH_H
+#define MATH_H
+
 //Evaluating Mathematical Expression============================================
 
 #include <string>
@@ -102,3 +105,10 @@ std::vector<std::shared_ptr<CToken>> infixToRPN(const std::vector<std::string> &
 	@return double value of evaluated vector
 */
 double evaluateRPN(const std::vector<std::shared_ptr<CToken>> & vec);
+
+bool evaluateString(double & res , std::string & str, const CTable & table);
+
+bool evaluateCell(double & res, const std::string & val,const CTable & table);
+
+
+#endif

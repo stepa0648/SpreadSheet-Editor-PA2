@@ -18,68 +18,7 @@
 
 using namespace std;
 
-
-bool evaluateString(double & res , string & str, CTable & table){
-      vector<string> infix;
-      vector< shared_ptr<CToken> > rpn;
-    	bool error = false;
-
-      try{
-      	infix = stringToVec(str, table);
-      }catch( const exception & excp){
-      	cerr << excp.what() << endl;
-      	error = true;
-      }
-
-      if( !error ){
-      	try{
-      		rpn = infixToRPN(infix);
-      	}catch(const exception & excp){
-      		cerr << excp.what() << endl;
-      		error = true;
-      	}
-      }
-      if( !error ){
-      	try{
-      		res = evaluateRPN( rpn );
-      	}catch( const exception & excp){
-      		cerr << excp.what() << endl;
-      		error = true;
-      	}
-      }
-
-      return error;
-}
-
-bool evaluateCell(double & res, const string & val, CTable & table){
-  bool NaN = false; //not a number boolean
-
-  // if string is a number just save it in the m_result in the cell
-  try{
-    res = stringToDouble(val);
-  }catch(invalid_argument a){
-    NaN = true;
-  }
-  if( !NaN ){
-    return true;
-  }
-
-
-  string str = val;
-  //if string is Mathematical expression evaluate it value and save it to m_result in the cell
-  if( isMathExpr(str) ){
-    bool error = evaluateString(res, str, table);
-
-    if(!error){
-      return true;
-    }else{
-      return false;
-    }
-
-  }else{
-    return false;
-  }
-}
+class CCell;
 
 //CRow==========================================================================
 
@@ -99,13 +38,26 @@ CCell CRow::getCell(size_t pos) const{
     return m_row.at(pos);
 }
 
-void CRow::print(size_t cnt, size_t x) {
+void CRow::print(size_t cnt, size_t x, const CTable & table) {
     if( x+11 >= m_row.size() ){
       m_row.resize(2 * (x+11), CCell(""));
     }
     cout << setw(10) << cnt << "|"; //print number of the row in front of the row
-    for (size_t i = x; i <= x+10; i++) {
-        cout << setw(10) << m_row[i] << "|";
+    double res = 0;
+    for (size_t i = x; i <= x+10; i++) {//prints one row of cells
+        res = m_row[i].getRes(table);
+        if(  res == 0 ){
+            if( m_row[i].getText().size() == 0 ){
+              cout << setw(10) << "" << "|";
+            }
+        }else{
+          string str = to_string(res);
+          if ( str.size() > 10 ) {
+              cout << str.substr(0, 8).append("..") << "|";
+          } else {
+              cout << setw(10) << res << "|"; //print each cell 10 chars wide
+          }
+        }
     }
     cout << endl;
 }
@@ -127,7 +79,7 @@ CCell & CTable::getCell(size_t y, size_t x) {
 
 /** returns double Value of the cell*/
 double CTable::getResCell(size_t y, size_t x)const{
-  return  (m_table[y]).getCell(x).getRes();
+  return  (m_table[y]).getCell(x).getRes(*this);
 }
 
 /**
@@ -139,48 +91,14 @@ void CTable::insert(size_t y, size_t x, const string & val) {
 
   double res = 0;
 
+  //zkontrolovat duplicity
+
   if( evaluateCell(res, val, *this) ){
-    getCell(y,x).setRes(res);
-    getCell(y,x).Number();
     cout << "Uspesne vlozeno jako matematicky vyraz" << endl;
   }else{
+    cout << "Neni matematicky vyraz" << endl;
     cout << "Uspesne vlozeno jako text" << endl;
   }
-
-  /*
-  bool NaN = false; //not a number boolean
-  double res = 0;
-
-  // if string is a number just save it in the m_result in the cell
-  try{
-    res = stringToDouble(val);
-  }catch(invalid_argument a){
-    NaN = true;
-  }
-  if( !NaN ){
-    getCell(y,x).setRes(res);
-  }
-
-
-  string str = val;
-  //if string is Mathematical expression evaluate it value and save it to m_result in the cell
-  if( isMathExpr(str) ){
-    bool error = evaluateString(res, str, *this);
-
-    if(!error){
-      getCell(y,x).setRes(res);
-      getCell(y,x).Number();
-      cout << "Uspesne vlozeno jako matematicky vyraz" << endl;
-    }else{
-      cout << "Neni matematicky vyraz" << endl;
-      cout << "Vlozeno jako text" << endl;
-    }
-
-  }else{
-    cout << "Uspesne vlozeno" << endl;
-  }
-
-  */
 }
 
 
@@ -208,6 +126,6 @@ void CTable::print(size_t y, size_t x) {
   cout << endl;
 
   for (size_t i = y; i <= y+10; i++) { //prints rows
-      m_table[i].print(i, x);
+      m_table[i].print(i, x, *this);
   }
 }

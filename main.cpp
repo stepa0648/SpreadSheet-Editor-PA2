@@ -9,6 +9,7 @@
 #include "CTable.h"
 #include "CCell.h"
 #include <climits>
+#include <exception>
 
 #define END 0
 #define PRINT 1
@@ -18,12 +19,22 @@
 
 using namespace std;
 
+class InvalidCoords: public exception{
+public:
+virtual const char * what() const noexcept{
+  return "Invalid Coordinates";
+}
+};
+
 void getCoords(int & y, int & x){
   cout << "Zadejte cislo radku: ";
   cin >> y;
   cout << "Zadejte cislo sloupce: ";
   cin >> x;
   cin.ignore(INT_MAX, '\n');
+  if( y < 0 || x < 0 ){
+    throw InvalidCoords();
+  }
 }
 
 int inputHandler(){
@@ -37,10 +48,10 @@ int inputHandler(){
     case 'c': return PRINTCELL; break;
     case 'h': return HELP; break;
     case 'q': return END; break;
-    default: cout << "Zadejte platne hodnoty" << endl;
+    default: cout << "Zadejte platne hodnoty. Stisknete h pro napovedu" << endl; return -1;
   }
-  return -1;
 
+  return -1;
 }
 
 /*
@@ -68,30 +79,53 @@ int main(int argc, char** argv) {
     int choice;
     int x, y;
     string str;
+    bool error = false;
 
     menu.printHelp();
     while(1){
-      choice = inputHandler();
 
+      choice = inputHandler();
+      error = false;
 
       if( choice == PRINT ){
         cout << "Vypis tabulky:" << endl;
-        getCoords(y,x);
-        table.print(y,x);
+        try{
+          getCoords(y,x);
+        }catch( const exception & excp){
+        	cerr << excp.what() << endl;
+        	error = true;
+        }
+        if(!error){
+          table.print(y,x);
+        }
       }else if( choice == INSERT){
         cout << "Vlozeni hodnoty do bunky:" << endl;
-        getCoords(y,x);
-        cout << "Zadejte text: ";
-        getline(cin, str); /** get text from user*/
+        try{
+          getCoords(y,x);
+        }catch( const exception & excp){
+        	cerr << excp.what() << endl;
+        	error = true;
+        }
 
-        table.insert(y,x,str);
+        if(!error){
+          cout << "Zadejte text: ";
+          getline(cin, str); /** get text from user*/
 
+          table.insert(y,x,str);
+        }
 
       }else if(choice == PRINTCELL){
         cout << "Vypis hodnoty bunky:" << endl;
-        getCoords(y,x);
-        cout << "Bunka(" << y << "," << x <<"): ";
-        table.getCell(y,x).printContent();
+        try{
+          getCoords(y,x);
+        }catch( const exception & excp){
+        	cerr << excp.what() << endl;
+        	error = true;
+        }
+        if(!error){
+          cout << "Bunka(" << y << "," << x <<"): ";
+          table.getCell(y,x).printContent(table);
+        }
       }else if(choice == HELP){
         menu.printHelp();
       }else if( choice == END){

@@ -11,6 +11,8 @@ using namespace std;
 
 //Evaluating Mathematical Expression============================================
 
+bool evaluateCell(double & res, const string & val, const CTable & table);
+
 /** if expression starts with = returns true and cut off the = sign from string*/
 bool isMathExpr(string & val){
   size_t i=0;
@@ -88,7 +90,7 @@ bool isCell(const string & str, double & y, double & x){
 		while(c != ';'){
 			/** ; wasnt found*/
 			if((unsigned) i >= str.size() ){
-				cout << "nenalezeno \";\"" << endl;
+				//cout << "nenalezeno \";\"" << endl;
 				return false;
 			}
 			substr += c;
@@ -100,7 +102,7 @@ bool isCell(const string & str, double & y, double & x){
 		try{
 			y = stringToDouble(substr);
 		}catch(const invalid_argument & a){
-      cout << "Y neni cislo" << endl;
+      //cout << "Y neni cislo" << endl;
 			return false;
 		}
 
@@ -117,7 +119,7 @@ bool isCell(const string & str, double & y, double & x){
 		try{
 			x = stringToDouble(substr);
 		}catch(const invalid_argument & a){
-			cout << "X neni cislo" << endl;
+			//cout << "X neni cislo" << endl;
 			return false;
 		}
 
@@ -157,7 +159,7 @@ vector<string> stringToVec( const string & str, const CTable & table ){
         vec.push_back(substr);
       }
 			if( isOperator( vec.back() ) || isFunction(vec[vec.size() - 1]) || vec[vec.size() - 1] == "(" ){
-				cout << "Chybny operator na konci" << endl;
+				//cout << "Chybny operator na konci" << endl;
 				throw OperatorError();
 			}
       break;
@@ -168,31 +170,31 @@ vector<string> stringToVec( const string & str, const CTable & table ){
     }
 
     if( prev == 0 && ( c == '*' || c == '/' || c == ')' || c == '^' || c == '+' ) ){ // if the first char is binary operator -> error
-      cout << "Chybny operator na zacatku" << endl;
+      //cout << "Chybny operator na zacatku" << endl;
 			throw OperatorError();
     }
     if( prev == '(' && (c == '*' || c == '/' || c == ')' || c=='^') ){ // if the next char after opening bracket is binary operator error
-      cout << "Chybny operator po oteviraci zavorce" << endl;
+      //cout << "Chybny operator po oteviraci zavorce" << endl;
 			throw OperatorError();
     }
 
 		if( c==')' && ( isOperator(prev1) || isFunction(prev1) ) ){
-			cout << "Chybny operator pred zaviraci zavorkou" << endl;
+			//cout << "Chybny operator pred zaviraci zavorkou" << endl;
 			throw OperatorError();
 		}
 
 		if( isOperator(c1) && ( !(prev >= 48 && prev <=57) && prev != ')' && prev != ']') ){
-			cout << "Chybny operator pred operatorem" << endl;
+			//cout << "Chybny operator pred operatorem" << endl;
 			throw OperatorError();
 		}
 
 		if( isOperator(prev1) ){
 			if( isOperator(c1) ){
-				cout << "Vice operatoru za sebou - CHYBA" << endl;
+			//	cout << "Vice operatoru za sebou - CHYBA" << endl;
 				throw OperatorError();
 			}
 			if(vec.size() == 0 && !(c >= 48 && c <= 57 ) ){
-				cout<< "Chybny operator na zacatku, a po nem neni cislo" << endl;
+			//	cout<< "Chybny operator na zacatku, a po nem neni cislo" << endl;
 				throw OperatorError();
 			}
 		}
@@ -205,7 +207,6 @@ vector<string> stringToVec( const string & str, const CTable & table ){
 				//checks if the substr is a cell
 				double x=0, y=0;
 				if( isCell( substr, y, x ) ){
-				
 					vec.push_back( to_string( table.getResCell(y,x) ) );
 				}else{
 					vec.push_back(substr);
@@ -226,8 +227,8 @@ vector<string> stringToVec( const string & str, const CTable & table ){
 	double x=0, y=0;
 	if( isCell( vec.back(), y, x ) ){
 		vec.pop_back();
-		//opravit
-		vec.push_back( to_string( table.getResCell(y,x) ) );
+
+    vec.push_back( to_string( table.getResCell(y,x) ) );
 	}
 
 
@@ -326,7 +327,7 @@ vector<shared_ptr<CToken>> infixToRPN(const vector<string> & vec){
         throw BracketsMissMatch();
       }
     }else{
-			cout << "Unknown symbol" << endl;
+			//cout << "Unknown symbol" << endl;
 			throw OperatorError();
 		}
   }
@@ -365,4 +366,65 @@ double evaluateRPN(const vector<shared_ptr<CToken>> & vec){
   }
 
   return stack.top();
+}
+
+bool evaluateString(double & res , string & str, const CTable & table){
+      vector<string> infix;
+      vector< shared_ptr<CToken> > rpn;
+    	bool error = false;
+
+      try{
+      	infix = stringToVec(str, table);
+      }catch( const exception & excp){
+      	//cerr << excp.what() << endl;
+      	error = true;
+      }
+
+      if( !error ){
+      	try{
+      		rpn = infixToRPN(infix);
+      	}catch(const exception & excp){
+      		//cerr << excp.what() << endl;
+      		error = true;
+      	}
+      }
+      if( !error ){
+      	try{
+      		res = evaluateRPN( rpn );
+      	}catch( const exception & excp){
+      		//cerr << excp.what() << endl;
+      		error = true;
+      	}
+      }
+
+      return error;
+}
+
+bool evaluateCell(double & res, const string & val, const CTable & table){
+  bool NaN = false; //not a number boolean
+
+  // if string is a number just save it in the m_result in the cell
+  try{
+    res = stringToDouble(val);
+  }catch(invalid_argument a){
+    NaN = true;
+  }
+  if( !NaN ){
+    return true;
+  }
+
+  string str = val;
+  //if string is Mathematical expression evaluate it value and save it to m_result in the cell
+  if( isMathExpr(str) ){
+    bool error = evaluateString(res, str, table);
+
+    if(!error){
+      return true;
+    }else{
+      return false;
+    }
+
+  }else{
+    return false;
+  }
 }
