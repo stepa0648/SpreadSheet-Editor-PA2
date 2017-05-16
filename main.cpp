@@ -84,6 +84,7 @@ int main(int argc, char** argv) {
         cout << "Zadejte text: ";
         getline(cin, str); /** get text from user*/
 
+
         table.insert(y,x,str);
 
         cout << "Uspesne vlozeno" << endl;

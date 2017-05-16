@@ -32,6 +32,7 @@ void CMenu::printHeader() {
 
 void CMenu::printMenu() {
     cout << "Menu:" << endl;
+
     cout << "'n' Vytvorit novy spreadsheet" << endl;
     cout << "'i' Informace a napoveda" << endl;
     cout << "'q' Konec" << endl;
@@ -57,6 +58,8 @@ void CMenu::printHelp() {
   cout << "'q' (quit) Konec" << endl;
   cout << endl;
   //cout << "==============================" << endl;
+
+ 
 }
 
 int CMenu::getInput() {
