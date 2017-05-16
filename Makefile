@@ -3,10 +3,10 @@ CXXFLAGS=-std=c++11 -Wall -pedantic
 LD=g++
 LDFLAGS=-std=c++11 -Wall -pedantic
 
-all: compile
+all: compile doc
 
 compile: main.o CTable.o CCell.o CToken.o CMenu.o Math.o
-	$(LD) $(LDFLAGS) main.o CTable.o CCell.o CToken.o CMenu.o -o spreadsheet
+	$(LD) $(LDFLAGS) main.o CTable.o CCell.o CToken.o CMenu.o Math.o -o spreadsheet
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -14,8 +14,11 @@ compile: main.o CTable.o CCell.o CToken.o CMenu.o Math.o
 run:
 	./spreadsheet
 
+doc:
+	doxygen Doxyfile
+
 clean:
-	rm -f spreadsheet *.o *~ core
+	rm -fR ./doc spreadsheet *.o *~ core
 
 #automatically generated
 CCell.o: CCell.cpp CCell.h Math.h CToken.h CTable.h

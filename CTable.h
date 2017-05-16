@@ -28,6 +28,7 @@ public:
     void insert(size_t y, size_t x, const std::string & val);
     void print(size_t y, size_t x);
     double getResCell(size_t y, size_t x)const;
+    std::set<std::pair<int,int>> getCellParents(size_t y, size_t x)const;
 
 private:
     std::vector<CRow> m_table;

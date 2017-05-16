@@ -23,13 +23,13 @@ class CCell;
 //CRow==========================================================================
 
 CRow::CRow() : width(10) {
-    m_row.resize( width+1, CCell(""));
+    m_row.resize( width+1, CCell("", set<pair<int,int>>() ));
 }
 
 CCell & CRow::operator[](size_t pos){
 
     if ( m_row.size() <= pos ) {
-        m_row.resize(2 * pos, CCell(""));
+        m_row.resize(2 * pos, CCell("", set<pair<int,int>>()));
     }
     return m_row[pos];
 }
@@ -40,7 +40,7 @@ CCell CRow::getCell(size_t pos) const{
 
 void CRow::print(size_t cnt, size_t x, const CTable & table) {
     if( x+11 >= m_row.size() ){
-      m_row.resize(2 * (x+11), CCell(""));
+      m_row.resize(2 * (x+11), CCell("", set<pair<int,int>>()));
     }
     cout << setw(10) << cnt << "|"; //print number of the row in front of the row
     double res = 0;
@@ -80,27 +80,117 @@ CCell & CTable::getCell(size_t y, size_t x) {
     return (m_table[y])[x];
 }
 
+set<pair<int,int>> CTable::getCellParents(size_t y, size_t x)const {
+    return (m_table[y]).getCell(x).retParentCells();
+}
+
 /** returns double Value of the cell*/
 double CTable::getResCell(size_t y, size_t x)const{
   return  (m_table[y]).getCell(x).getRes(*this);
 }
+
+bool findParents(const string & str, set<pair<int,int>> & set){
+  char c;
+  bool found = false;
+	cout << str << endl;
+  if( str.size() != 0 ){
+    c = str[0];
+  }else{
+    return false;
+  }
+  int begin = 0, end = 0;
+  for(size_t i=0; i<str.size(); i++){
+			c= str[i];
+
+			if( c == '[' ){
+        begin = i;
+      }
+      if( c == ']'){
+        end = i;
+        if( begin < end ){
+          int y = 0, x = 0;
+          if( isCell( str.substr(begin, end), y, x )){
+            found = true;
+            set.insert(make_pair(y,x));
+          }
+        }
+        begin = 0;
+        end = 0;
+      }
+  }
+  return found;
+}
+
+set<pair<int,int>> findAncestors(set<pair<int,int>> & ancestors,set<pair<int,int>> parents, const CTable & table){
+
+  ancestors.insert(parents.begin(), parents.end());
+
+  if( parents.empty() ){
+    cout << "findAncestors empty" << endl;
+    return set<pair<int,int>>();
+  }
+  for(auto it: parents){
+    findAncestors(ancestors, table.getCellParents(it.first, it.second), table);
+  }
+
+  cout << "findAncestors end" << endl;
+  return ancestors;
+}
+
+
 
 /**
   inserts string val in Cell in y'th row and in x'th column
   or if it starts with = inserts number in m_result in CCell
 */
 void CTable::insert(size_t y, size_t x, const string & val) {
-  getCell(y,x) = CCell(val);
 
-  double res = 0;
+  bool cycle = false;
+  //zkontrolovat cykly
+  set<pair<int,int>> parents;
 
-  //zkontrolovat duplicity
+  //checks the cycles only on math expressions
+  if(isMathExpr(val)){
 
-  if( evaluateCell(res, val, *this) ){
-    cout << "Uspesne vlozeno jako matematicky vyraz" << endl;
-  }else{
-    cout << "Neni matematicky vyraz" << endl;
-    cout << "Uspesne vlozeno jako text" << endl;
+    if( findParents(val, parents) ){
+
+      if( parents.find(make_pair(y,x)) != parents.end() ){
+        cout << "Cyklus, nelze vlozit" << endl;
+        cycle = true;
+      }
+
+    }
+
+    if(!cycle){
+
+      set<pair<int,int>> ancestors;
+      ancestors = findAncestors(ancestors, parents, *this);
+
+      cout << "Ancestors" << endl;
+      for(auto it: ancestors){
+        cout << it.first << ";" << it.second << endl;
+
+      }
+      //checks for cycles
+      cout << "Kontroluji cykly" << endl;
+      if( ancestors.find(make_pair(y,x)) != ancestors.end() ){
+        cout << "Cyklus, nelze vlozit" << endl;
+        cycle = true;
+      }
+
+    }
+  }
+
+  if(!cycle){
+    getCell(y,x) = CCell(val, parents);
+
+    double res = 0;
+    if( evaluateCell(res, val, *this) ){
+      cout << "Uspesne vlozeno jako matematicky vyraz" << endl;
+    }else{
+      cout << "Neni matematicky vyraz" << endl;
+      cout << "Uspesne vlozeno jako text" << endl;
+    }
   }
 }
 
