@@ -18,8 +18,18 @@
  */
 bool isMathExprTrans(std::string & val);
 
-
+/**
+	same as isMathExprTrans but does not cut off the = sign
+   @param val is the string which we want to test
+   @return true if the expression starts with =
+ */
 bool isMathExpr(const std::string & val);
+
+
+bool findParents(const std::string & str, std::set<std::pair<int,int>> & set);
+
+
+std::set<std::pair<int,int>> findAncestors(std::set<std::pair<int,int>> & ancestors,std::set<std::pair<int,int>> parents, const CTable & table);
 
 /**
    \class BracketsMissMatch

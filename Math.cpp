@@ -10,6 +10,58 @@
 
 using namespace std;
 
+bool findParents(const string & str, set<pair<int,int>> & set){
+  char c;
+  bool found = false;
+
+  //cout << str << endl;
+
+  if( str.size() != 0 ){
+    c = str[0];
+  }else{
+    return false;
+  }
+
+  int begin = 0, end = 0;
+  for(size_t i=0; i<str.size(); i++){
+			c = str[i];
+
+			if( c == '[' ){
+        begin = i;
+      }
+      if( c == ']'){
+        end = i;
+        if( begin < end ){
+          int y = 0, x = 0;
+          if( isCell( str.substr(begin, end-begin+1), y, x )){
+            found = true;
+            set.insert(make_pair(y,x));
+          }
+        }
+        begin = 0;
+        end = 0;
+      }
+  }
+
+  return found;
+}
+
+set<pair<int,int>> findAncestors(set<pair<int,int>> & ancestors,set<pair<int,int>> parents, const CTable & table){
+
+  ancestors.insert(parents.begin(), parents.end());
+
+  if( parents.empty() ){
+    return set<pair<int,int>>();
+  }
+  for(auto it: parents){
+    findAncestors(ancestors, table.getCellParents(it.first, it.second), table);
+  }
+
+  return ancestors;
+}
+
+
+
 //Evaluating Mathematical Expression============================================
 
 bool evaluateCell(double & res, const string & val, const CTable & table);
@@ -175,37 +227,42 @@ vector<string> stringToVec( const string & str, const CTable & table ){
                         continue;
                 }
 
-                if( prev == 0 && ( c == '*' || c == '/' || c == ')' || c == '^' || c == '+' ) ) { // if the first char is binary operator -> error
-                        //cout << "Chybny operator na zacatku" << endl;
-                        throw OperatorError();
-                }
-                if( prev == '(' && (c == '*' || c == '/' || c == ')' || c=='^') ) { // if the next char after opening bracket is binary operator error
-                        //cout << "Chybny operator po oteviraci zavorce" << endl;
+                // if the first char is binary operator -> error
+                //Wrong operator at the beginning
+                if( prev == 0 && ( c == '*' || c == '/' || c == ')' || c == '^' || c == '+' ) ) {
                         throw OperatorError();
                 }
 
-                if( c==')' && ( isOperator(prev1) || isFunction(prev1) ) ) {
-                        //cout << "Chybny operator pred zaviraci zavorkou" << endl;
+                //Wrong operator after left bracket
+                if( prev == '(' && (c == '*' || c == '/' || c == ')' || c=='^' ) ) { // if the next char after opening bracket is binary operator error
                         throw OperatorError();
                 }
 
+                //Wrong operator before right bracket
+                if( c==')' && ( isOperator(prev1) || isFunction(prev1) || prev == ']') ) {
+                        throw OperatorError();
+                }
+
+                //Wrong token (number or function or bracket) before operator
                 if( isOperator(c1) && ( !(prev >= 48 && prev <=57) && prev != ')' && prev != ']') ) {
-                        //cout << "Chybny operator pred operatorem" << endl;
-                        throw OperatorError();
+                  if(c1!= "-"){
+                    throw OperatorError();
+                  }
                 }
 
                 if( isOperator(prev1) ) {
+                        //more operators in a row - error
                         if( isOperator(c1) ) {
-                                //	cout << "Vice operatoru za sebou - CHYBA" << endl;
                                 throw OperatorError();
                         }
+
+                        //After operator at the beginning is not a number
                         if(vec.size() == 0 && !(c >= 48 && c <= 57 ) ) {
-                                //	cout<< "Chybny operator na zacatku, a po nem neni cislo" << endl;
                                 throw OperatorError();
                         }
                 }
 
-                /** if char is an operator or brackets and isn not first or is left bracket insert it into a vector and prev substr as well*/
+                /** if char is an operator or brackets and is not first or is left bracket insert it into a vector and prev substr as well*/
                 if( ( ( isOperator(c1) || c1 == "(" || c1 == ")" )
                       && ( prev != 0 && prev != '(' ) ) || c == '(' ) {
 
@@ -367,7 +424,7 @@ double evaluateRPN(const vector<shared_ptr<CToken> > & vec){
                 if( it->isNumber() ) {
                         stack.push( it->getVal() );
                 }else{
-                        it->performOperation(stack);
+                    it->performOperation(stack);
                 }
         }
 
@@ -382,7 +439,6 @@ bool evaluateString(double & res, string & str, const CTable & table){
         try{
                 infix = stringToVec(str, table);
         }catch( const exception & excp) {
-                //cerr << excp.what() << endl;
                 error = true;
         }
 
@@ -390,7 +446,6 @@ bool evaluateString(double & res, string & str, const CTable & table){
                 try{
                         rpn = infixToRPN(infix);
                 }catch(const exception & excp) {
-                        //cerr << excp.what() << endl;
                         error = true;
                 }
         }
@@ -398,7 +453,6 @@ bool evaluateString(double & res, string & str, const CTable & table){
                 try{
                         res = evaluateRPN( rpn );
                 }catch( const exception & excp) {
-                        //cerr << excp.what() << endl;
                         error = true;
                 }
         }

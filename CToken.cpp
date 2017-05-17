@@ -27,6 +27,13 @@ class NotAFunction : public exception{
 	}
 };
 
+class InvalidDomain : public exception{
+	public:
+	virtual const char * what() const noexcept{
+		return "InvalidDomain";
+	}
+};
+
 
 //==============================================================================
 CNumber::CNumber( double val = 0 ):m_Val(val){}
@@ -55,24 +62,43 @@ void CNumber::print() const{
       double val = stack.top();
       stack.pop();
 
+			//SIN=====================================================================
       if(m_func == "sin"){
         res = sin(val);
+			//COS=====================================================================
       }else if(m_func == "cos"){
         res = cos(val);
+			//TAN=====================================================================
       }else if(m_func == "tan"){
         res = tan(val);
+			//COTG====================================================================
       }else if(m_func == "cotg"){
         res = pow(tan(val), -1);
+			//ABS=====================================================================
       }else if(m_func == "abs"){
         res = fabs(val);
+			//SQRT====================================================================
       }else if(m_func == "sqrt"){
+				if(val < 0){
+					throw InvalidDomain();
+				}
         res = sqrt(val);
+			//EXP=====================================================================
       }else if(m_func == "exp"){
         res = exp(val);
+			//LOG=====================================================================
       }else if(m_func == "log"){
+				if(val <= 0){
+					throw InvalidDomain();
+				}
         res = log10(val);
-      }else if(m_func == "ln"){
+			//LN======================================================================
+			}else if(m_func == "ln"){
+				if(val <= 0){
+					throw InvalidDomain();
+				}
         res = log(val);
+			//ELSE====================================================================
       }else{
         /** throws an exception NotAFunction, if its not known function*/
         throw NotAFunction();

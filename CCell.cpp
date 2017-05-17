@@ -22,10 +22,6 @@ void CCell::printContent(const CTable & table){
         double res = 0;
         evaluateCell(res, m_textVal, table);
         cout << "Vysledek: " << res << endl;
-
-        for( auto it: m_parentCells ){
-          cout << it.first << ";" << it.second << endl;
-        }
 }
 
 void CCell::addParentCell(int y, int x){

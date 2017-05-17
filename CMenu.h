@@ -13,7 +13,6 @@ public:
     CMenu();
     CMenu(const CMenu& orig);
     virtual ~CMenu();
-    void printInfo();
     void printHelp();
     void printHeader();
     void printMenu();

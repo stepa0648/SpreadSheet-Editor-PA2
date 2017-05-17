@@ -6,13 +6,13 @@ LDFLAGS=-std=c++11 -Wall -pedantic
 all: compile doc
 
 compile: main.o CTable.o CCell.o CToken.o CMenu.o Math.o
-	$(LD) $(LDFLAGS) main.o CTable.o CCell.o CToken.o CMenu.o Math.o -o spreadsheet
+	$(LD) $(LDFLAGS) main.o CTable.o CCell.o CToken.o CMenu.o Math.o -o severste
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 run:
-	./spreadsheet
+	./severste
 
 doc:
 	doxygen Doxyfile

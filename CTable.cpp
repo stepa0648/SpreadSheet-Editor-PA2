@@ -89,56 +89,6 @@ double CTable::getResCell(size_t y, size_t x)const{
   return  (m_table[y]).getCell(x).getRes(*this);
 }
 
-bool findParents(const string & str, set<pair<int,int>> & set){
-  char c;
-  bool found = false;
-	cout << str << endl;
-  if( str.size() != 0 ){
-    c = str[0];
-  }else{
-    return false;
-  }
-  int begin = 0, end = 0;
-  for(size_t i=0; i<str.size(); i++){
-			c= str[i];
-
-			if( c == '[' ){
-        begin = i;
-      }
-      if( c == ']'){
-        end = i;
-        if( begin < end ){
-          int y = 0, x = 0;
-          if( isCell( str.substr(begin, end), y, x )){
-            found = true;
-            set.insert(make_pair(y,x));
-          }
-        }
-        begin = 0;
-        end = 0;
-      }
-  }
-  return found;
-}
-
-set<pair<int,int>> findAncestors(set<pair<int,int>> & ancestors,set<pair<int,int>> parents, const CTable & table){
-
-  ancestors.insert(parents.begin(), parents.end());
-
-  if( parents.empty() ){
-    cout << "findAncestors empty" << endl;
-    return set<pair<int,int>>();
-  }
-  for(auto it: parents){
-    findAncestors(ancestors, table.getCellParents(it.first, it.second), table);
-  }
-
-  cout << "findAncestors end" << endl;
-  return ancestors;
-}
-
-
-
 /**
   inserts string val in Cell in y'th row and in x'th column
   or if it starts with = inserts number in m_result in CCell
@@ -163,16 +113,17 @@ void CTable::insert(size_t y, size_t x, const string & val) {
 
     if(!cycle){
 
+      //checks if parents are not uinitialised CCells
+      for(auto it: parents){
+        if( (unsigned) it.first > height || (unsigned) it.second > width ){
+          getCell(it.first, it.second) = CCell("", set<pair<int,int>>());
+        }
+      }
+
       set<pair<int,int>> ancestors;
       ancestors = findAncestors(ancestors, parents, *this);
 
-      cout << "Ancestors" << endl;
-      for(auto it: ancestors){
-        cout << it.first << ";" << it.second << endl;
-
-      }
       //checks for cycles
-      cout << "Kontroluji cykly" << endl;
       if( ancestors.find(make_pair(y,x)) != ancestors.end() ){
         cout << "Cyklus, nelze vlozit" << endl;
         cycle = true;
@@ -221,4 +172,6 @@ void CTable::print(size_t y, size_t x) {
   for (size_t i = y; i <= y+10; i++) { //prints rows
       m_table[i].print(i, x, *this);
   }
+  cout << endl;
+  cout << "'h' (help) Zobrazeni napovedy k ovladani" << endl;
 }
