@@ -3,24 +3,29 @@
 
 #include <iostream>
 #include <string>
+#include <set>
+#include <utility>
 
+class CTable;
 
 class CCell {
 public:
 
-    CCell( std::string text);
+  CCell( std::string text, std::set<std::pair<int,int>> parents);
 
-    void printContent();
-    void setRes(double res);
-    double getRes() const;
-    void Number();
+  void printContent(const CTable & table);
+  double getRes(const CTable & table) const;
+  std::string getText() const;
 
-    friend std::ostream & operator << (std::ostream & out, const CCell & a);
+  void addParentCell(int y, int x);
+
+  std::set< std::pair< int, int > > retParentCells();
+
+  friend std::ostream & operator << (std::ostream & out, const CCell & a);
 
 private:
-    std::string m_textVal;
-    double m_result;
-    bool isNumber;
+  std::string m_textVal;
+  std::set< std::pair< int, int > > m_parentCells;
 };
 
 #endif
