@@ -96,10 +96,10 @@ double CTable::getResCell(size_t y, size_t x)const{
 void CTable::insert(size_t y, size_t x, const string & val) {
 
   bool cycle = false;
-  //zkontrolovat cykly
+
   set<pair<int,int>> parents;
 
-  //checks the cycles only on math expressions
+  //checks the cycles only if it is math expression
   if(isMathExpr(val)){
 
     if( findParents(val, parents) ){

@@ -12,7 +12,7 @@
 #include <exception>
 
 //Smazat
-//#include "Math.h"
+#include "Math.h"
 
 #define END 0
 #define PRINT 1
@@ -37,7 +37,6 @@ virtual const char * what() const noexcept{
 void getCoords(int & y, int & x){
 
   cout << "Zadejte cislo radku: ";
-
   cin >> y;
   if(cin.fail()){
     cin.clear();
@@ -51,7 +50,6 @@ void getCoords(int & y, int & x){
   }
 
   cout << "Zadejte cislo sloupce: ";
-
   cin >> x;
   if(cin.fail()){
     cin.clear();
@@ -86,7 +84,6 @@ int inputHandler(){
  *
  */
 int main(int argc, char** argv) {
-
     CMenu menu;
 
     menu.printHeader();

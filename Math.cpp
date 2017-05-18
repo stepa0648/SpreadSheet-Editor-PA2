@@ -81,14 +81,16 @@ bool isMathExprTrans(string & val){
         }
 
         if(c == '=') {
-                string sub1;
-                if(i==0) {
-                        sub1 = val.substr(i+1);
-                }else{
-                        sub1 = val.substr(i);
-                }
-                val = sub1;
-                return true;
+          // if there is not only = in the expression return true
+          i++;
+          while( i < val.size() ){
+            c = val[i];
+            if(c != ' ' && c != '\t' ){
+              return true;
+            }
+            i++;
+          }
+                return false;
         }
 
         return false;
@@ -106,7 +108,16 @@ bool isMathExpr(const std::string & val){
           i++;
   }
   if(c == '=') {
-          return true;
+    // if there is not only = in the expression return true
+    i++;
+    while( i < val.size() ){
+      c = val[i];
+      if(c != ' ' && c != '\t' ){
+        return true;
+      }
+      i++;
+    }
+          return false;
   }
 
   return false;
@@ -217,7 +228,6 @@ vector<string> stringToVec( const string & str, const CTable & table ){
                                 vec.push_back(substr);
                         }
                         if( isOperator( vec.back() ) || isFunction(vec[vec.size() - 1]) || vec[vec.size() - 1] == "(" ) {
-                                //cout << "Chybny operator na konci" << endl;
                                 throw OperatorError();
                         }
                         break;
@@ -239,7 +249,7 @@ vector<string> stringToVec( const string & str, const CTable & table ){
                 }
 
                 //Wrong operator before right bracket
-                if( c==')' && ( isOperator(prev1) || isFunction(prev1) || prev == ']') ) {
+                if( c==')' && ( isOperator(prev1) || isFunction(prev1) || prev != ']') ) {
                         throw OperatorError();
                 }
 

@@ -44,7 +44,7 @@ void CMenu::printHelp() {
   cout << endl;
   cout << "+, -, *, /, ^(mocnina)"<< endl;
   cout << endl;
-  cout << "Podporovane matematicko funkce:" << endl;
+  cout << "Podporovane matematicke funkce:" << endl;
   cout << endl;
   cout << "sin(x): sinus" << endl;
   cout << "cos(x): cosinus" << endl;
@@ -59,9 +59,9 @@ void CMenu::printHelp() {
   cout << "Ovladani:" << endl;
   cout << endl;
   cout << "'p' (print) Zobrazeni tabulky: zobrazuje se tabulka o velikosti 10x10, souradnice jsou leveho horniho rohu teto tabulky" << endl;
-  cout << "             maximum souradnice: 999 990" << endl;
+  cout << "             maximum souradnice: 499 990" << endl;
   cout << "'i' (insert) Vlozeni do tabulky: zadejte souradnice a pote text co chcete vlozit" << endl;
-  cout << "             maximum souradnice: 1 000 000" << endl;
+  cout << "             maximum souradnice:  500 000" << endl;
   cout << "             Pro vlozeni matematickeho vyrazu uvedte jako prvni znak \"=\"" << endl;
   cout << "             Pro vlozeni hodnoty bunky pouzijte \"[y;x]\" kde y je cislo radku a x cislo sloupce" << endl;
   cout << "             priklad: =10*sin(25)+[10;10]" << endl;
