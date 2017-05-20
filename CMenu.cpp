@@ -1,24 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/**
+ * \file CMenu.cpp
+ * \author severste
+   \brief This is the file where CMenu class is inicialised
 
-/*
- * File:   CMenu.cpp
- * Author: severste
- *
- * Created on April 12, 2017, 7:46 PM
  */
 
 #include "CMenu.h"
 #include <iostream>
 #include <climits>
+/**
+  \def END is constant that returns getInput if user whishes to end program
+*/
+#define END 0
+/**
+\def START is constant that returns getInput if user whishes to start table
+*/
+#define START 5
+/**
+\def HELP is constant that returns getInput if user whishes to print the help
+*/
+#define HELP 4
+
 using namespace std;
+
 CMenu::CMenu() {
 }
 
-void CMenu::printHeader() {
+void CMenu::printHeader() const {
     cout << "   _____                          _     _               _     ______    _ _ _                    __   ___  \n";
     cout << "  / ____|                        | |   | |             | |   |  ____|  | (_) |                  /_ | / _ \\ \n";
     cout << " | (___  _ __  _ __ ___  __ _  __| |___| |__   ___  ___| |_  | |__   __| |_| |_ ___  _ __  __   _| || | | |\n";
@@ -30,7 +38,8 @@ void CMenu::printHeader() {
     cout << endl;
 }
 
-void CMenu::printMenu() {
+
+void CMenu::printMenu()const {
     cout << "Menu:" << endl;
     cout << "'n' Vytvorit novy spreadsheet" << endl;
     cout << "'h' Informace a napoveda" << endl;
@@ -38,11 +47,13 @@ void CMenu::printMenu() {
 }
 
 
-void CMenu::printHelp() {
-  //cout << "==============================================================" << endl;
+
+void CMenu::printHelp()const {
+  cout << "==============================================================" << endl;
   cout << "Podporovane matematicke operatory:" << endl;
   cout << endl;
   cout << "+, -, *, /, ^(mocnina)"<< endl;
+  cout << "U retezeni mocnin pouzivejte zavorky! Napr: 2^3^4 se vyhodnoti jako (2^3)^4" << endl;
   cout << endl;
   cout << "Podporovane matematicke funkce:" << endl;
   cout << endl;
@@ -72,7 +83,8 @@ void CMenu::printHelp() {
   //cout << "==============================" << endl;
 }
 
-int CMenu::getInput() {
+
+int CMenu::getInput()const {
     char c;
     while (1) {
         cin >> c;
@@ -83,20 +95,14 @@ int CMenu::getInput() {
         }
 
         if (c == 'n') {
-            return 1;
+            return START;
         }
         if (c == 'h') {
-            return 2;
+            return HELP;
         }
         if (c == 'q') {
-            return 3;
+            return END;
         }
     }
 
-}
-
-CMenu::CMenu(const CMenu& orig) {
-}
-
-CMenu::~CMenu() {
 }

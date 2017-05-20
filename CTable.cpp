@@ -1,8 +1,8 @@
-/*
- * File:   main.cpp
- * Author: severste
- *
- * Created on 23. dubna 2017, 16:20
+/**
+ * \file CTable.cpp
+ * \author severste
+   \brief This is the file where CTable and CRow classes are inicialised
+
  */
 
  #include "CTable.h"
@@ -23,6 +23,7 @@ class CCell;
 //CRow==========================================================================
 
 CRow::CRow() : width(10) {
+   //makes vector 11 cells long
     m_row.resize( width+1, CCell("", set<pair<int,int>>() ));
 }
 
@@ -38,11 +39,11 @@ CCell CRow::getCell(size_t pos) const{
     return m_row.at(pos);
 }
 
-void CRow::print(size_t cnt, size_t x, const CTable & table) {
+void CRow::print(size_t rowNum, size_t x, const CTable & table) {
     if( x+11 >= m_row.size() ){
       m_row.resize(2 * (x+11), CCell("", set<pair<int,int>>()));
     }
-    cout << setw(10) << cnt << "|"; //print number of the row in front of the row
+    cout << setw(10) << rowNum << "|"; //print number of the row in front of the row
     double res = 0;
     for (size_t i = x; i <= x+10; i++) {//prints one row of cells
 
@@ -68,6 +69,7 @@ void CRow::print(size_t cnt, size_t x, const CTable & table) {
 //CTable========================================================================
 
 CTable::CTable() : width(10), height(10) {
+    //make vector long 11 rows
     m_table.resize( 11, CRow() );
 }
 
@@ -84,15 +86,11 @@ set<pair<int,int>> CTable::getCellParents(size_t y, size_t x)const {
     return (m_table[y]).getCell(x).retParentCells();
 }
 
-/** returns double Value of the cell*/
 double CTable::getResCell(size_t y, size_t x)const{
   return  (m_table[y]).getCell(x).getRes(*this);
 }
 
-/**
-  inserts string val in Cell in y'th row and in x'th column
-  or if it starts with = inserts number in m_result in CCell
-*/
+
 void CTable::insert(size_t y, size_t x, const string & val) {
 
   bool cycle = false;
@@ -116,6 +114,7 @@ void CTable::insert(size_t y, size_t x, const string & val) {
       //checks if parents are not uinitialised CCells
       for(auto it: parents){
         if( (unsigned) it.first > height || (unsigned) it.second > width ){
+          //if parents are uninitialised makes them empty
           getCell(it.first, it.second) = CCell("", set<pair<int,int>>());
         }
       }
@@ -134,7 +133,9 @@ void CTable::insert(size_t y, size_t x, const string & val) {
 
   if(!cycle){
     getCell(y,x) = CCell(val, parents);
-
+    cout << endl;
+    cout << "Bunka: [" << y << ";" << x << "]" << endl;
+    cout << val << endl;
     double res = 0;
     if( evaluateCell(res, val, *this) ){
       cout << "Uspesne vlozeno jako matematicky vyraz" << endl;
@@ -143,10 +144,25 @@ void CTable::insert(size_t y, size_t x, const string & val) {
       cout << "Uspesne vlozeno jako text" << endl;
     }
   }
+  // transform coordinates to print inserted cell in center of the table or print 0;0 top left corner table
+  int y1, x1;
+  if(y >= 5){
+    y1=y-5;
+  }else{
+    y1 = 0;
+  }
+  if(x >= 5){
+    x1 = x-5;
+  }else{
+    x1 = 0;
+  }
+
+    //prints inserted cell in center of the table
+    print(y1,x1);
 }
 
 
-void CTable::print(size_t y, size_t x) {
+void CTable::print(size_t y, size_t x){
   //if the area that we want to print is bigger than our tabel, we must resize it
   if (m_table.size() <= y+10) {
       m_table.resize(2 * (y+10), CRow() );

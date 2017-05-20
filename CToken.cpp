@@ -1,3 +1,9 @@
+/**
+ * \file CToken.cpp
+ * \author severste
+   \brief This is the file where CToken, CNumber, COperator and CFunction classes are inicialised
+
+ */
 
 #include "CToken.h"
 
@@ -13,10 +19,10 @@
 using namespace std;
 
 /**
-	\DivisionByZero
-	This class is used to be throw as an exception when you divide by 0
+	\class DivisionByZero
+	\brief Class is used to be throw as an exception when you divide by 0
 */
-class DivisionByZero: public exception{
+class DivisionByZero : public exception{
 	public:
 	virtual const char * what() const noexcept{
 		return "DivisionByZero";
@@ -24,8 +30,8 @@ class DivisionByZero: public exception{
 };
 
 /**
-	\NotAFunction
-	This class is used to be throw as an exception when string is not a funcion
+	\class NotAFunction
+	\brief Class is used to be throw as an exception when string is not a funcion
 */
 class NotAFunction : public exception{
 	public:
@@ -35,8 +41,8 @@ class NotAFunction : public exception{
 };
 
 /**
-	\InvalidDomain
-	This class is used to be throw as an exception when domain of a function is invalid for example sqrt(-2)
+	\class InvalidDomain
+	\brief Class is used to be throw as an exception when domain of a function is invalid for example sqrt(-2)
 */
 class InvalidDomain : public exception{
 	public:
@@ -44,6 +50,7 @@ class InvalidDomain : public exception{
 		return "InvalidDomain";
 	}
 };
+
 
 
 //==============================================================================
@@ -66,11 +73,7 @@ double CNumber::getVal() const {
    bool CFunction::isNumber() const {
     return false;
   }
-	/**
-		Method performOperation pops value out of a stack and performs operation according to the function used
-		and result push back to a stack
-		@param stack<double> stack - is a stack where are double values of CNumber from evaluating RPN
-	*/
+
    void CFunction::performOperation(stack<double> & stack){
       double res;
       double val = stack.top();
@@ -153,21 +156,12 @@ double CNumber::getVal() const {
    double CFunction::getVal() const {
     return 0;
   }
-
-
-
 //==============================================================================
   COperator::COperator( string o): m_op(o) {}
 
    bool COperator::isNumber() const {
     return false;
   }
-
-	/**
-		Method performOperation pops 2 values out of a stack and performs operation between them according to the operator used
-		and result push back to a stack
-		@param stack<double> stack - is a stack where are double values of CNumber from evaluating RPN
-	*/
    void COperator::performOperation(stack<double> & stack){
     double res;
     double right = stack.top();
