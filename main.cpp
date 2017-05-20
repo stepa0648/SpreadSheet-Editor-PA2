@@ -5,7 +5,25 @@
    \brief This is the mainfile of this project
 
    \mainpage Simple Spreadsheet Editor
-   Simple Spreadsheet editor
+   \section header Simple Spreadsheet editor
+   Simple Spreadsheet editor created by Stepan Severa (severste) for subject Programming and algorithmic 2 in summer semester 2016/2017
+   \subsection desc Basic decripiton
+   It is a simple Spreadsheet editor as you can see in title. You can insert text or mathematical expressions into the cells.\n
+   Mathematical expression must start with =. In math. expressions you can use mathematical operators: +, -, *, /, ^(power) or
+   some basic functions: sin(x): sinus, cos(x): cosinus, tan(x): tangens, cotg(x): cotangens, abs(x): absolute value, exp(x): exponencial function,
+   log(x): decimal logarithm, ln(x): natural logarithm, sqrt(x): square root.
+   To evaluate mathematical expressions I use shunting yard alrgorithm https://en.wikipedia.org/wiki/Shunting-yard_algorithm
+   \subsection controls Controls:
+   'p' (print) Print table. Table is 11x11 large. Inserted coords are of the top left corner.\n
+                Maximum coords are: 499 990\n
+   'i' (insert) Insertion into the table. Input coords and then inserted value.\n
+                Maximum coords are:  500 000\n
+                To insert mathematical expression the first char must be =\n
+                To insert link to another cell use [y;x], where y is row number and x is column number.\n
+                For example: =10*sin(25)+[10;10]\n
+   'c' (print Cell) Shows the text inserted in cell\n
+   'h' (help) Print the help\n
+   'q' (quit) End\n
  */
 
 #include "CMenu.h"

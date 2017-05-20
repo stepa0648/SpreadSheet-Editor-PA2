@@ -169,6 +169,7 @@ void CTable::print(size_t y, size_t x){
   }
 
   cout << "===============================================================================" << endl;
+  cout << "Horni levy roh: " << y << ";" << x << endl;
   cout << endl;
   cout << setw(10) << " " << "|"; //prints empty cell in left top corner
 
