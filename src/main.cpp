@@ -133,6 +133,10 @@ int inputHandler() {
   char x;
   cin >> x;
   cin.ignore(INT_MAX, '\n');
+    //if eof end
+  if(cin.eof()){
+    return END;
+  }
 
   switch (x) {
   case 'p':

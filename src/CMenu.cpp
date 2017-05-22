@@ -88,6 +88,11 @@ int CMenu::getInput()const {
     while (1) {
         cin >> c;
         cin.ignore(INT_MAX, '\n');
+        //if eof end
+        if(cin.eof()){
+          return END;
+        }
+
         if (c != 'n' && c != 'h' && c != 'q') {
             cout << "Stisknete klavesu n, h nebo q" << endl;
         }
