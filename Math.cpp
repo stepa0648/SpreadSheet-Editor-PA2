@@ -80,17 +80,6 @@ set<pair<int,int>> findAncestors(set<pair<int,int>> & ancestors,set<pair<int,int
   return ancestors;
 }
 
-
-
-/**
-   \brief Evalutes string from cell
-   @param res, double where the evaluated value will be stored
-   @param val is string from cell, that will be evaluated
-   @param table, where cell is stored
-   @return bool, true if string was evaluated
- */
-bool evaluateCell(double & res, const string & val, const CTable & table);
-
 /**
    \brief Checks if string is math expression and cut off the = sign from string
    @param val is the string which we want to test
@@ -259,10 +248,67 @@ bool isCell(const string & str, int & y, int & x){
                 if( y >= 0 && x >= 0) {
                         return true;
                 }
-
         }
 
         return false;
+}
+
+/**
+  \brief If end of the string is reached push the last token to the vector and check if there is not any error
+  @param vec is a vector where would be tokens saved
+  @param substr is substring of string that we are evaluating
+*/
+void endOfString(vector<string> & vec,const string & substr){
+  // if you have reached the end of a string push last token into the vector
+   if(substr.size() != 0) {
+           vec.push_back(substr);
+   }
+   //if last token in string is opearator or function or left bracket throw operator Error
+   if( isOperator( vec.back() ) || isFunction(vec[vec.size() - 1]) || vec[vec.size() - 1] == "(" ) {
+           throw OperatorError();
+   }
+}
+
+/**
+  \brief If char is an operator or brackets and is not first or operator is left bracket, insert it into a vector and previous substr as well
+  @param vec is a vector where would be tokens saved
+  @param substr is substring of string that we are evaluating
+  @param table is table where parent cells are stored
+  @param c is character on actual position
+*/
+void pushOperatorAndSubstr(vector<string> & vec,string & substr,const CTable & table, char c){
+  if(substr.size() != 0) {
+          //checks if the substr is a cell
+          int x=0, y=0;
+          if( isCell( substr, y, x ) ) {
+                  vec.push_back( to_string( table.getResCell(y,x) ) );
+          }else{
+                  vec.push_back(substr);
+          }
+  }
+
+  substr = c;
+  vec.push_back(substr);
+  substr.erase();
+
+}
+
+/**
+  \brief Function to find errors if previous token is operators
+  @param vec is a vector that is tested to be empty to find out if token is first
+  @param c is a character on actual position in string
+  @param c1 is a string that represents char c
+  */
+void prevIsOperator(const vector<string> & vec, char c, const string & c1){
+  //more operators in a row - error
+  if( isOperator(c1) ) {
+          throw OperatorError();
+  }
+
+  //After operator at the beginning is not a number
+  if(vec.size() == 0 && !(c >= 48 && c <= 57 ) ) {
+          throw OperatorError();
+  }
 }
 
 /**
@@ -293,15 +339,8 @@ vector<string> stringToVec( const string & str, const CTable & table ){
                 prev1 = prev;
 
                 if( c == 0 ) { // if its end of string break
-                        // if you have reached the end of a string push last token into the vector
-                        if(substr.size() != 0) {
-                                vec.push_back(substr);
-                        }
-                        //if last token in string is opearator or function or left bracket throw operator Error
-                        if( isOperator( vec.back() ) || isFunction(vec[vec.size() - 1]) || vec[vec.size() - 1] == "(" ) {
-                                throw OperatorError();
-                        }
-                        break;
+                  endOfString(vec, substr);
+                  break;
                 }
                 if( c == ' ' || c == '\t' ) { // ignore whitespaces
                         i++;
@@ -332,34 +371,13 @@ vector<string> stringToVec( const string & str, const CTable & table ){
                 }
 
                 if( isOperator(prev1) ) {
-                        //more operators in a row - error
-                        if( isOperator(c1) ) {
-                                throw OperatorError();
-                        }
-
-                        //After operator at the beginning is not a number
-                        if(vec.size() == 0 && !(c >= 48 && c <= 57 ) ) {
-                                throw OperatorError();
-                        }
+                    prevIsOperator(vec, c,c1);
                 }
 
                 /* if char is an operator or brackets and is not first or is left bracket insert it into a vector and prev substr as well*/
                 if( ( ( isOperator(c1) || c1 == "(" || c1 == ")" )
                       && ( prev != 0 && prev != '(' ) ) || c == '(' ) {
-
-                        if(substr.size() != 0) {
-                                //checks if the substr is a cell
-                                int x=0, y=0;
-                                if( isCell( substr, y, x ) ) {
-                                        vec.push_back( to_string( table.getResCell(y,x) ) );
-                                }else{
-                                        vec.push_back(substr);
-                                }
-                        }
-
-                        substr = c;
-                        vec.push_back(substr);
-                        substr.erase();
+                        pushOperatorAndSubstr(vec, substr, table, c);
                         i++;
                         continue;
                 }
@@ -369,12 +387,11 @@ vector<string> stringToVec( const string & str, const CTable & table ){
         }
 
         int x=0, y=0;
+        //if the last token in vec is cell, insert to vector its value instead
         if( isCell( vec.back(), y, x ) ) {
                 vec.pop_back();
-
                 vec.push_back( to_string( table.getResCell(y,x) ) );
         }
-
 
         return vec;
 }
@@ -397,6 +414,15 @@ int operatorPrecedence(const string & c){
         return 0;
 }
 
+/**
+   \brief If token is operator do:
+   While a operator with higer or equal precedence is on the stack, pop it to the output and then push operator on a stack.
+   If a left bracket is on the top of the stack dont pop operators, just push this one on the stack
+   @param out is the vector of shared pointer to CTokens
+   @param stack of strings of tokens
+   @param vec is a string that we are evaluating
+   @param i is a position of token in vec we are evaluating
+ */
 void tokenIsOperator(vector<shared_ptr<CToken> > & out,stack<string> & stack, const vector<string> & vec, size_t & i){
   if( !stack.empty() ) {
           /* while a operator with higer or equal precedence is on the stack, pop it to the output and then push operator on a stack */
@@ -417,6 +443,48 @@ void tokenIsOperator(vector<shared_ptr<CToken> > & out,stack<string> & stack, co
   stack.push(vec[i]);
 }
 
+/**
+   \brief If token is right bracket empty the stack until ( is found
+   If left bracket is not found BracketsMissMatch
+   @param out is the vector of shared pointer to CTokens
+   @param stack of strings of tokens
+ */
+void tokenIsRightBr(vector<shared_ptr<CToken> > & out, stack<string> & stack){
+  while( stack.top() != "(" ) {
+          if( stack.empty() ) {
+                  break;
+          }
+          // pop the operators between brackets
+          if( isFunction( stack.top() ) ) {
+                  out.push_back( shared_ptr<CToken> (new CFunction( stack.top() ) ) );
+                  stack.pop();
+          }else{
+                  out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
+                  stack.pop();
+          }
+  }
+  // if stack isnt empty, there is a left bracket - pop it out
+  if(!stack.empty() ) {
+          stack.pop();
+
+          // if there was a function before bracket push it in the output
+          if(!stack.empty() ) {
+                  if( isFunction( stack.top() ) ) {
+                          out.push_back( shared_ptr<CToken> (new CFunction( stack.top() ) ) );
+                          stack.pop();
+                  }
+          }
+  }else{
+          // if a left bracket wasnt in the stack the brackets were wrong
+          throw BracketsMissMatch();
+  }
+}
+
+/**
+   \brief If you have run out of the tokens to read you need to empty the stack
+   @param out is the vector of shared pointer to CTokens
+   @param stack of strings of tokens
+ */
 void emptyTheStack(vector<shared_ptr<CToken> > & out, stack<string> & stack){
   while (!stack.empty() ) {
           // if there is a left bracket in stack, brackets were wrong
@@ -424,10 +492,12 @@ void emptyTheStack(vector<shared_ptr<CToken> > & out, stack<string> & stack){
                   throw BracketsMissMatch();
                   break;
           }
+          // if is an operator
           if( isFunction( stack.top() ) ) {
                   out.push_back(shared_ptr<CToken> (new CFunction( stack.top() ) ) );
                   stack.pop();
-          }else{ // if is an operator
+          // if is an operator
+          }else{
                   out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
                   stack.pop();
           }
@@ -453,36 +523,14 @@ vector<shared_ptr<CToken> > infixToRPN(const vector<string> & vec){
                 }catch( invalid_argument a) {
                         isNumber = false;
                 }
-
                 if( isNumber ) {
                         /* if token is a number, just push it on the output*/
                         out.push_back(shared_ptr<CToken> (new CNumber(res)) );
-
                 }else if( isFunction( vec[i] ) ) {
                         /* if token is function push it on the stack*/
                         stack.push( vec[i] );
-
                 }else if( isOperator( vec[i]) ) {
                         tokenIsOperator(out, stack, vec, i);
-                        /*
-                        if( !stack.empty() ) {
-                                // while a operator with higer or equal precedence is on the stack, pop it to the output and then push operator on a stack
-                                while( operatorPrecedence(stack.top()) >= operatorPrecedence( vec[i] )) {
-                                        // if a left bracket is on the top of the stack dont pop operators, just push this one on the stack
-                                        if( stack.top() == "(" ) {
-                                                break;
-                                        }
-                                        // push operator in the output
-                                        out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
-                                        stack.pop();
-                                        if( stack.empty() ) {
-                                                break;
-                                        }
-                                }
-                        }
-                        // push operator on a stack
-                        stack.push(vec[i]);
-                        */
                 }else if( vec[i] == "(") {
                         /* if token is left bracket push it on the stack no matter what*/
                         stack.push(vec[i]);
@@ -490,41 +538,12 @@ vector<shared_ptr<CToken> > infixToRPN(const vector<string> & vec){
                         /* if token is right bracket empty stack until left bracket is found
                             if you empty whole stack and didnt find a left bracket, brackets were wrong
                          */
-                        while( stack.top() != "(" ) {
-                                if( stack.empty() ) {
-                                        break;
-                                }
-                                /* pop the operators between brackets*/
-                                if( isFunction( stack.top() ) ) {
-                                        out.push_back( shared_ptr<CToken> (new CFunction( stack.top() ) ) );
-                                        stack.pop();
-                                }else{
-                                        out.push_back( shared_ptr<CToken> (new COperator( stack.top() ) ) );
-                                        stack.pop();
-                                }
-                        }
-                        /* if stack isnt empty, there is a left bracket - pop it out*/
-                        if(!stack.empty() ) {
-                                stack.pop();
-
-                                /* if there was a function before bracket push it in the output*/
-                                if(!stack.empty() ) {
-                                        if( isFunction( stack.top() ) ) {
-                                                out.push_back( shared_ptr<CToken> (new CFunction( stack.top() ) ) );
-                                                stack.pop();
-                                        }
-                                }
-                        }else{
-                                /* if a left bracket wasnt in the stack the brackets were wrong*/
-                                throw BracketsMissMatch();
-                        }
+                         tokenIsRightBr(out, stack);
                 }else{
                         //Unknown symbol found
                         throw OperatorError();
                 }
         }
-
-
         /* if you have run out of the tokens you need to empty the stack*/
         emptyTheStack(out, stack);
 
@@ -588,11 +607,12 @@ bool evaluateString(double & res, string & str, const CTable & table){
 }
 
 /**
-  \brief Evaluates string from a cell
-  @param res is double where evaluated value is stored
-  @param val is a string that will be evaluated
-  @param table is table where cells are located
-*/
+   \brief Evalutes string from cell
+   @param res, double where the evaluated value will be stored
+   @param val is string from cell, that will be evaluated
+   @param table, where cell is stored
+   @return bool, true if string was evaluated
+ */
 bool evaluateCell(double & res, const string & val, const CTable & table){
         bool NaN = false; //not a number boolean
 

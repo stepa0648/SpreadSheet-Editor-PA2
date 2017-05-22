@@ -5,25 +5,30 @@ LDFLAGS=-std=c++11 -Wall -pedantic
 
 all: compile doc
 
-compile: main.o CTable.o CCell.o CToken.o CMenu.o Math.o
-	$(LD) $(LDFLAGS) main.o CTable.o CCell.o CToken.o CMenu.o Math.o -o severste
+compile: severste
+
+severste: ./src/main.o ./src/CTable.o ./src/CCell.o ./src/CToken.o ./src/CMenu.o ./src/Math.o
+	$(LD) $(LDFLAGS) ./src/main.o ./src/CTable.o ./src/CCell.o ./src/CToken.o ./src/CMenu.o ./src/Math.o -o severste
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-run:
+run: compile
 	./severste
 
-doc:
-	doxygen Doxyfile
+test:
+	./severste < ./examples/in_0001.txt
+
+doc: ./src/main.cpp ./src/CTable.cpp ./src/CCell.cpp ./src/CToken.cpp ./src/CMenu.cpp ./src/Math.cpp ./src/CTable.h ./src/CCell.h ./src/CToken.h ./src/CMenu.h ./src/Math.h
+	doxygen ./src/Doxyfile
 
 clean:
-	rm -fR ./doc spreadsheet *.o *~ core
+	rm -fR ./doc severste ./src/*.o *~ core
 
 #automatically generated
-CCell.o: CCell.cpp CCell.h Math.h CToken.h CTable.h
-CMenu.o: CMenu.cpp CMenu.h
-CTable.o: CTable.cpp CTable.h CCell.h CToken.h Math.h
-CToken.o: CToken.cpp CToken.h
-Math.o: Math.cpp CToken.h CTable.h CCell.h
-main.o: main.cpp CMenu.h CTable.h CCell.h
+CCell.o: ./src/CCell.cpp ./src/CCell.h ./src/Math.h ./src/CToken.h ./src/CTable.h
+CMenu.o: ./src/CMenu.cpp ./src/CMenu.h
+CTable.o: ./src/CTable.cpp ./src/CTable.h ./src/CCell.h ./src/CToken.h ./src/Math.h
+CToken.o: ./src/CToken.cpp ./src/CToken.h
+Math.o: ./src/Math.cpp ./src/CToken.h ./src/CTable.h ./src/CCell.h
+main.o: ./src/main.cpp ./src/CMenu.h ./src/CTable.h ./src/CCell.h

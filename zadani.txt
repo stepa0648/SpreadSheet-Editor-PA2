@@ -1,0 +1,12 @@
+# Zadani semestralni prace z Progtestu
+Jednoduchý spreadsheet
+
+Vytvořte jednoduchý spreadsheet editor.
+
+Implementujte následující funkcionalitu:
+
+    Do buňek je možné zadávat jednoduché výrazy (jako v kalkulačce) a funkce např. SIN, ABS [př. A2 = SIN(B2) + 1].
+    Editor detekuje cykly a nepovolí vytvoření výrazu, který by cyklus způsbil.
+    Editor umožňuje zpracovávat výrazy se závorkami typu: ((A1+5)/B5)-A5 nebo s několika funkcemi aplikovatelnými na sloupce/řádky/oblasti typu AVG, SUM, apod. [př. A2 = SUM(B1:B20)]
+
+Volitelně: uživatelské rozghraní, vykreslování/export grafů...
