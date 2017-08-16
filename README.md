@@ -1,5 +1,4 @@
 # SpreadSheet-Editor-PA2
-Autor: Štěpán Severa
 Semestrální práce na předmět PA2 v akad. roce 2016/17
 Autor: Štěpán Severa
 Jedná se o jednoduchý spredsheet editor. Obsahuje nekonečnou tabulku, které je možná zadávat text a matematické výrazy.
