@@ -5,7 +5,7 @@ Autor: Štěpán Severa
 
 Jedná se o jednoduchý spredsheet editor. Obsahuje nekonečnou tabulku, které je možná zadávat text a matematické výrazy.
 
-Kompilace probíhá pomocí příkazu make compile, spuštění make run, generování dokumentace make doc
+Kompilace probíhá pomocí příkazu `make compile`, spuštění `make run`, generování dokumentace `make doc`
 
 Ovládání:
 
